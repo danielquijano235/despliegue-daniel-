@@ -10,6 +10,7 @@
  */
 
 import React, { useState } from 'react';
+import Boton from '../Compartidos/Boton';
 
 const coloresAvatar = ['#4A90E2', '#8B5CF6', '#10B981', '#FDB022', '#EC4899', '#F97316'];
 
@@ -101,13 +102,14 @@ const VistaResenas = () => {
       <div className="modulo-filtros">
         <div className="filtros-estado">
           {['todas', '5', '4', '3'].map(f => (
-            <button
+            <Boton
               key={f}
+              variante={filtroCalificacion === f ? 'primario' : 'secundario'}
               className={`filtro-btn ${filtroCalificacion === f ? 'activo' : ''}`}
               onClick={() => setFiltroCalificacion(f)}
             >
               {f === 'todas' ? 'Todas' : `${f} ★`}
-            </button>
+            </Boton>
           ))}
         </div>
       </div>

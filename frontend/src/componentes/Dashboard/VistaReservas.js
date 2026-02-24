@@ -10,6 +10,7 @@
  */
 
 import React, { useState, useEffect } from 'react';
+import Boton from '../Compartidos/Boton';
 import {
   obtenerTodasReservas,
   actualizarReserva,
@@ -151,9 +152,9 @@ const VistaReservas = () => {
           <h1 className="dashboard-titulo">Reservas</h1>
           <p className="dashboard-fecha">{reservas.length} reservas en total</p>
         </div>
-        <button className="btn-nueva-reserva" onClick={() => setModalVisible(true)}>
+        <Boton variante="primario" className="btn-nueva-reserva" onClick={() => setModalVisible(true)}>
           + Nueva Reserva
-        </button>
+        </Boton>
       </div>
 
       {/* Filtros por estado */}
@@ -164,14 +165,15 @@ const VistaReservas = () => {
           { clave: 'confirmada', label: 'Confirmadas' },
           { clave: 'cancelada', label: 'Canceladas' },
         ].map(filtro => (
-          <button
+          <Boton
             key={filtro.clave}
+            variante={filtroEstado === filtro.clave ? 'primario' : 'secundario'}
             className={`filtro-btn ${filtroEstado === filtro.clave ? 'filtro-activo' : ''}`}
             onClick={() => setFiltroEstado(filtro.clave)}
           >
             {filtro.label}
             <span className="filtro-count">{contarEstado(filtro.clave)}</span>
-          </button>
+          </Boton>
         ))}
       </div>
 
@@ -199,7 +201,10 @@ const VistaReservas = () => {
           </div>
         ) : reservasFiltradas.length === 0 ? (
           <div className="reservas-vacio">
-            <p>📅 No se encontraron reservas</p>
+            <div style={{ textAlign: 'center', padding: '24px', color: '#718096' }}>
+              <img src="https://img.icons8.com/ios-filled/48/1a1a2e/calendar--v1.png" alt="sin reservas" width="48" height="48" />
+              <p style={{ marginTop: 12 }}>No se encontraron reservas</p>
+            </div>
           </div>
         ) : (
           <table className="reservas-tabla">
@@ -235,7 +240,7 @@ const VistaReservas = () => {
                   <td className="tabla-fecha">{formatearFecha(reserva.fecha)}</td>
                   <td className="tabla-hora">{formatearHora(reserva.hora)}</td>
                   <td className="tabla-personas">
-                    <span className="personas-badge">👥 {reserva.numero_personas}</span>
+                    <span className="personas-badge"><img src="https://img.icons8.com/ios-filled/14/1a1a2e/people.png" alt="personas" width="14" height="14" style={{verticalAlign: 'middle', marginRight: 6}} />{reserva.numero_personas}</span>
                   </td>
                   <td className="tabla-mesa">
                     {reserva.mesa_numero ? `Mesa ${reserva.mesa_numero}` : '—'}
@@ -247,38 +252,24 @@ const VistaReservas = () => {
                   </td>
                   <td className="tabla-notas">
                     {reserva.notas_especiales ? (
-                      <span className="notas-badge" title={reserva.notas_especiales}>
-                        📝 {reserva.notas_especiales.substring(0, 20)}{reserva.notas_especiales.length > 20 ? '...' : ''}
+                        <span className="notas-badge" title={reserva.notas_especiales}>
+                        <img src="https://img.icons8.com/ios-filled/14/1a1a2e/note.png" alt="nota" width="14" height="14" style={{verticalAlign: 'middle', marginRight: 6}} />{reserva.notas_especiales.substring(0, 20)}{reserva.notas_especiales.length > 20 ? '...' : ''}
                       </span>
                     ) : '—'}
                   </td>
                   <td>
                     <div className="tabla-acciones">
                       {reserva.estado === 'pendiente' && (
-                        <button
-                          className="accion-btn accion-confirmar"
-                          onClick={() => manejarCambiarEstado(reserva.id, 'confirmada')}
-                          title="Confirmar"
-                        >
-                          ✓
-                        </button>
+                        <Boton variante="ghost" className="accion-btn accion-confirmar" onClick={() => manejarCambiarEstado(reserva.id, 'confirmada')} title="Confirmar">
+                          <img src="https://img.icons8.com/ios-filled/14/1a1a2e/checkmark.png" alt="confirmar" width="14" height="14" />
+                        </Boton>
                       )}
                       {reserva.estado !== 'cancelada' && (
-                        <button
-                          className="accion-btn accion-cancelar"
-                          onClick={() => manejarCambiarEstado(reserva.id, 'cancelada')}
-                          title="Cancelar"
-                        >
-                          ✕
-                        </button>
+                        <Boton variante="ghost" className="accion-btn accion-cancelar" onClick={() => manejarCambiarEstado(reserva.id, 'cancelada')} title="Cancelar">
+                          <img src="https://img.icons8.com/ios-filled/14/1a1a2e/multiply.png" alt="cancelar" width="14" height="14" />
+                        </Boton>
                       )}
-                      <button
-                        className="accion-btn accion-eliminar"
-                        onClick={() => manejarEliminar(reserva.id)}
-                        title="Eliminar"
-                      >
-                        🗑
-                      </button>
+                      <Boton variante="peligro" className="accion-btn accion-eliminar" onClick={() => manejarEliminar(reserva.id)} title="Eliminar" />
                     </div>
                   </td>
                 </tr>

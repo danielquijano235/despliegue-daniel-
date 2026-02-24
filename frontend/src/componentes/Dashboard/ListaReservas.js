@@ -12,6 +12,7 @@
  */
 
 import React from 'react';
+import Boton from '../Compartidos/Boton';
 
 // Colores para los avatares (se asignan rotativamente)
 const coloresAvatar = [
@@ -23,7 +24,7 @@ const coloresAvatar = [
   '#F97316', // Naranja
 ];
 
-const ListaReservas = ({ reservas }) => {
+const ListaReservas = ({ reservas, onVerTodas = () => {} }) => {
   /**
    * Formatear la hora de "19:00:00" a "19:00"
    */
@@ -86,7 +87,9 @@ const ListaReservas = ({ reservas }) => {
       </div>
 
       {/* Botón para ver todas las reservas */}
-      <button className="btn-ver-todas">Ver todas las reservas</button>
+      <div style={{ display: 'flex', justifyContent: 'center', padding: '12px 20px' }}>
+        <Boton variante="secundario" onClick={onVerTodas}>Ver todas las reservas</Boton>
+      </div>
     </div>
   );
 };

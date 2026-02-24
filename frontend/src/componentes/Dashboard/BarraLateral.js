@@ -14,19 +14,20 @@
 
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
+import Boton from '../Compartidos/Boton';
 
 // Items del menú organizados por categorías
 const menuPrincipal = [
-  { icono: 'https://img.icons8.com/ios-filled/20/FFFFFF/home.png', iconoActivo: 'https://img.icons8.com/ios-filled/20/1e3a5f/home.png', nombre: 'Inicio', clave: 'inicio' },
-  { icono: 'https://img.icons8.com/ios-filled/20/FFFFFF/calendar--v1.png', iconoActivo: 'https://img.icons8.com/ios-filled/20/1e3a5f/calendar--v1.png', nombre: 'Reservas', clave: 'reservas' },
-  { icono: 'https://img.icons8.com/ios-filled/20/FFFFFF/conference-call.png', iconoActivo: 'https://img.icons8.com/ios-filled/20/1e3a5f/conference-call.png', nombre: 'Clientes', clave: 'clientes' },
-  { icono: 'https://img.icons8.com/ios-filled/20/FFFFFF/chair.png', iconoActivo: 'https://img.icons8.com/ios-filled/20/1e3a5f/chair.png', nombre: 'Mesas', clave: 'mesas' },
+  { icono: 'https://img.icons8.com/ios-filled/20/FFFFFF/home.png', iconoActivo: 'https://img.icons8.com/ios-filled/20/1a1a2e/home.png', nombre: 'Inicio', clave: 'inicio' },
+  { icono: 'https://img.icons8.com/ios-filled/20/FFFFFF/calendar--v1.png', iconoActivo: 'https://img.icons8.com/ios-filled/20/1a1a2e/calendar--v1.png', nombre: 'Reservas', clave: 'reservas' },
+  { icono: 'https://img.icons8.com/ios-filled/20/FFFFFF/conference-call.png', iconoActivo: 'https://img.icons8.com/ios-filled/20/1a1a2e/conference-call.png', nombre: 'Clientes', clave: 'clientes' },
+  { icono: 'https://img.icons8.com/ios-filled/20/FFFFFF/chair.png', iconoActivo: 'https://img.icons8.com/ios-filled/20/1a1a2e/chair.png', nombre: 'Mesas', clave: 'mesas' },
 ];
 
 const menuSecundario = [
-  { icono: 'https://img.icons8.com/ios-filled/20/FFFFFF/combo-chart.png', iconoActivo: 'https://img.icons8.com/ios-filled/20/1e3a5f/combo-chart.png', nombre: 'Análisis', clave: 'analisis' },
-  { icono: 'https://img.icons8.com/ios-filled/20/FFFFFF/restaurant-menu.png', iconoActivo: 'https://img.icons8.com/ios-filled/20/1e3a5f/restaurant-menu.png', nombre: 'Menú', clave: 'menu' },
-  { icono: 'https://img.icons8.com/ios-filled/20/FFFFFF/star--v1.png', iconoActivo: 'https://img.icons8.com/ios-filled/20/1e3a5f/star--v1.png', nombre: 'Reseñas', clave: 'resenas' },
+  { icono: 'https://img.icons8.com/ios-filled/20/FFFFFF/combo-chart.png', iconoActivo: 'https://img.icons8.com/ios-filled/20/1a1a2e/combo-chart.png', nombre: 'Análisis', clave: 'analisis' },
+  { icono: 'https://img.icons8.com/ios-filled/20/FFFFFF/restaurant-menu.png', iconoActivo: 'https://img.icons8.com/ios-filled/20/1a1a2e/restaurant-menu.png', nombre: 'Menú', clave: 'menu' },
+  { icono: 'https://img.icons8.com/ios-filled/20/FFFFFF/star--v1.png', iconoActivo: 'https://img.icons8.com/ios-filled/20/1a1a2e/star--v1.png', nombre: 'Reseñas', clave: 'resenas' },
 ];
 
 const BarraLateral = ({ usuario, onCerrarSesion, seccionActiva = 'inicio', onCambiarSeccion }) => {
@@ -45,8 +46,9 @@ const BarraLateral = ({ usuario, onCerrarSesion, seccionActiva = 'inicio', onCam
   const renderItem = (item, indice) => {
     const activo = seccionActiva === item.clave;
     return (
-      <button
+      <Boton
         key={indice}
+        variante={activo ? 'primario' : 'ghost'}
         className={`sidebar-item ${activo ? 'activo' : ''}`}
         onClick={() => onCambiarSeccion && onCambiarSeccion(item.clave)}
       >
@@ -54,14 +56,14 @@ const BarraLateral = ({ usuario, onCerrarSesion, seccionActiva = 'inicio', onCam
           <img src={activo ? item.iconoActivo : item.icono} alt={item.nombre} width="18" height="18" />
         </span>
         <span className="sidebar-item-nombre">{item.nombre}</span>
-      </button>
+      </Boton>
     );
   };
 
   return (
     <aside className="sidebar">
-      {/* Logo */}
-      <div className="sidebar-logo" onClick={() => navigate('/')} style={{ cursor: 'pointer' }}>
+      {/* Logo (no navegar desde el dashboard a la landing) */}
+      <div className="sidebar-logo" style={{ cursor: 'default' }} title="BookIt">
         <img src="/assets/images/logo-bookit.png" alt="BookIt" className="sidebar-logo-img" />
       </div>
 
@@ -90,10 +92,10 @@ const BarraLateral = ({ usuario, onCerrarSesion, seccionActiva = 'inicio', onCam
       </div>
 
       {/* Botón para cerrar sesión */}
-      <button className="btn-cerrar-sesion" onClick={onCerrarSesion}>
+      <Boton variante="ghost" className="btn btn--ghost btn-cerrar-sesion" onClick={onCerrarSesion}>
         <img src="https://img.icons8.com/ios-filled/16/FFFFFF/exit.png" alt="salir" width="16" height="16" style={{verticalAlign: 'middle', marginRight: '8px', opacity: 0.7}} />
         Cerrar Sesión
-      </button>
+      </Boton>
     </aside>
   );
 };

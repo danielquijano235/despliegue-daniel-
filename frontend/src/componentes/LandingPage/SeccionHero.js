@@ -14,6 +14,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import DemoReserva from './DemoReserva';
+import Boton from '../Compartidos/Boton';
 
 const SeccionHero = () => {
   const navigate = useNavigate();
@@ -44,13 +45,8 @@ const SeccionHero = () => {
 
           {/* Botones de acción */}
           <div className="hero-botones">
-            <button 
-              className="btn-empezar"
-              onClick={() => navigate('/login')}
-            >
-              Empezar Ahora →
-            </button>
-            <button className="btn-demo" onClick={() => setMostrarDemo(true)}>
+            <Boton variante="primario" onClick={() => navigate('/login')}>Empezar Ahora →</Boton>
+            <Boton variante="secundario" onClick={() => setMostrarDemo(true)}>
               <svg
                 width="14"
                 height="14"
@@ -63,18 +59,14 @@ const SeccionHero = () => {
                 <path d="M8 5v14l11-7z" />
               </svg>
               Ver Demo
-            </button>
+            </Boton>
           </div>
 
           {/* Botón destacado para la demo de restaurante */}
           <div style={{marginTop:'1.5rem', textAlign:'left', marginBottom:'2.5rem'}}>
-            <button 
-              className="btn-azul"
-              style={{marginTop:0, marginBottom:'0.5rem'}}
-              onClick={() => navigate('/demo-landing')}
-            >
+            <Boton variante="secundario" onClick={() => navigate('/demo-landing')}>
               Cómo se vería tu restaurante
-            </button>
+            </Boton>
           </div>
 
           {/* Estadísticas en fila */}

@@ -21,6 +21,7 @@
 
 import React, { useState, useRef, useEffect } from 'react';
 import { useNotificaciones } from '../../contextos/NotificacionesContext';
+import Boton from '../Compartidos/Boton';
 
 /**
  * Convertir fecha ISO a texto relativo legible
@@ -47,10 +48,10 @@ const tiempoRelativo = (fechaISO) => {
  */
 const obtenerIconoTipo = (tipo) => {
   const iconos = {
-    reserva: 'https://img.icons8.com/ios-filled/20/4A90E2/restaurant-table.png',
-    cliente: 'https://img.icons8.com/ios-filled/20/8B5CF6/user.png',
-    sistema: 'https://img.icons8.com/ios-filled/20/F97316/settings.png',
-    info: 'https://img.icons8.com/ios-filled/20/10B981/info--v1.png',
+    reserva: 'https://img.icons8.com/ios-filled/20/1a1a2e/restaurant-table.png',
+    cliente: 'https://img.icons8.com/ios-filled/20/1a1a2e/user.png',
+    sistema: 'https://img.icons8.com/ios-filled/20/1a1a2e/settings.png',
+    info: 'https://img.icons8.com/ios-filled/20/1a1a2e/info--v1.png',
   };
   return iconos[tipo] || iconos.info;
 };
@@ -116,13 +117,14 @@ const BarraSuperior = ({ onNuevaReserva }) => {
       <div className="barra-acciones">
         {/* Botón de notificaciones */}
         <div className="notificaciones-contenedor">
-          <button
+          <Boton
+            ref={botonRef}
+            variante="ghost"
             className={`btn-notificaciones ${panelAbierto ? 'activo' : ''}`}
             onClick={() => setPanelAbierto(!panelAbierto)}
-            ref={botonRef}
           >
             <img
-              src="https://img.icons8.com/ios-filled/22/1e3a5f/bell--v1.png"
+              src="https://img.icons8.com/ios-filled/22/1a1a2e/bell--v1.png"
               alt="notificaciones"
               width="22"
               height="22"
@@ -132,7 +134,7 @@ const BarraSuperior = ({ onNuevaReserva }) => {
                 {noLeidas > 9 ? '9+' : noLeidas}
               </span>
             )}
-          </button>
+          </Boton>
 
           {/* Panel desplegable de notificaciones */}
           {panelAbierto && (
@@ -147,12 +149,9 @@ const BarraSuperior = ({ onNuevaReserva }) => {
                 </div>
                 <div className="notificaciones-header-acciones">
                   {noLeidas > 0 && (
-                    <button
-                      className="notificaciones-btn-texto"
-                      onClick={marcarTodasLeidas}
-                    >
+                    <Boton variante="secundario" className="notificaciones-btn-texto" onClick={marcarTodasLeidas}>
                       Marcar todas leídas
-                    </button>
+                    </Boton>
                   )}
                 </div>
               </div>
@@ -162,7 +161,7 @@ const BarraSuperior = ({ onNuevaReserva }) => {
                 {notificaciones.length === 0 ? (
                   <div className="notificaciones-vacio">
                     <img
-                      src="https://img.icons8.com/ios-filled/48/cccccc/bell--v1.png"
+                      src="https://img.icons8.com/ios-filled/48/1a1a2e/bell--v1.png"
                       alt="sin notificaciones"
                       width="48"
                       height="48"
@@ -201,21 +200,15 @@ const BarraSuperior = ({ onNuevaReserva }) => {
                       {/* Indicador de no leída + botón eliminar */}
                       <div className="notificacion-acciones">
                         {!notif.leida && <span className="notificacion-punto"></span>}
-                        <button
+                        <Boton
+                          variante="peligro"
                           className="notificacion-btn-eliminar"
                           onClick={(e) => {
                             e.stopPropagation();
                             eliminarNotificacion(notif.id);
                           }}
                           title="Eliminar"
-                        >
-                          <img
-                            src="https://img.icons8.com/ios-filled/14/999999/delete-sign.png"
-                            alt="eliminar"
-                            width="14"
-                            height="14"
-                          />
-                        </button>
+                        />
                       </div>
                     </div>
                   ))
@@ -225,9 +218,9 @@ const BarraSuperior = ({ onNuevaReserva }) => {
               {/* Footer del panel */}
               {notificaciones.length > 0 && (
                 <div className="notificaciones-footer">
-                  <button className="notificaciones-btn-limpiar" onClick={limpiarTodas}>
+                  <Boton variante="secundario" className="notificaciones-btn-limpiar" onClick={limpiarTodas}>
                     Limpiar todas
-                  </button>
+                  </Boton>
                 </div>
               )}
             </div>
@@ -235,9 +228,9 @@ const BarraSuperior = ({ onNuevaReserva }) => {
         </div>
 
         {/* Botón para crear nueva reserva */}
-        <button className="btn-nueva-reserva" onClick={onNuevaReserva}>
+        <Boton variante="primario" className="btn-nueva-reserva" onClick={onNuevaReserva}>
           + Nueva Reserva
-        </button>
+        </Boton>
       </div>
     </header>
   );

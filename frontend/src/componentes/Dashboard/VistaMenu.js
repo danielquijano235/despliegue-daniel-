@@ -10,6 +10,9 @@
  */
 
 import React, { useState, useEffect } from 'react';
+import ConfirmDialog from '../Compartidos/ConfirmDialog';
+import { useNotificaciones } from '../../contextos/NotificacionesContext';
+import Boton from '../Compartidos/Boton';
 
 // Datos de ejemplo para el menú
 const menuInicial = [
@@ -88,10 +91,10 @@ const menuInicial = [
 ];
 
 const categorias = [
-  { id: 'entradas', nombre: 'Entradas', icono: 'https://img.icons8.com/ios-filled/20/000000/salad.png', color: '#10B981' },
-  { id: 'principales', nombre: 'Platos Principales', icono: 'https://img.icons8.com/ios-filled/20/000000/restaurant.png', color: '#FDB022' },
-  { id: 'postres', nombre: 'Postres', icono: 'https://img.icons8.com/ios-filled/20/000000/cake.png', color: '#EC4899' },
-  { id: 'bebidas', nombre: 'Bebidas', icono: 'https://img.icons8.com/ios-filled/20/000000/wine-glass.png', color: '#8B5CF6' },
+  { id: 'entradas', nombre: 'Entradas', icono: 'https://img.icons8.com/ios-filled/20/1a1a2e/salad.png', color: '#10B981' },
+  { id: 'principales', nombre: 'Platos Principales', icono: 'https://img.icons8.com/ios-filled/20/1a1a2e/restaurant.png', color: '#FDB022' },
+  { id: 'postres', nombre: 'Postres', icono: 'https://img.icons8.com/ios-filled/20/1a1a2e/cake.png', color: '#EC4899' },
+  { id: 'bebidas', nombre: 'Bebidas', icono: 'https://img.icons8.com/ios-filled/20/1a1a2e/wine-glass.png', color: '#8B5CF6' },
 ];
 
 const VistaMenu = () => {
@@ -171,7 +174,7 @@ const VistaMenu = () => {
 
   const guardarPlato = () => {
     if (!formulario.nombre || !formulario.precio) {
-      alert('Por favor complete los campos obligatorios');
+      agregarNotificacion('info', 'Validación', 'Por favor completa los campos obligatorios');
       return;
     }
 
@@ -197,10 +200,25 @@ const VistaMenu = () => {
     cerrarModal();
   };
 
+  const { agregarNotificacion } = useNotificaciones();
+  const [confirmOpen, setConfirmOpen] = useState(false);
+  const [confirmPayload, setConfirmPayload] = useState(null);
+
   const eliminarPlato = (id) => {
-    if (window.confirm('¿Está seguro de que desea eliminar este plato?')) {
-      setPlatos(platos.filter(p => p.id !== id));
+    const plato = platos.find(p => p.id === id);
+    setConfirmPayload({ tipo: 'plato', id, texto: plato ? plato.nombre : 'plato' });
+    setConfirmOpen(true);
+  };
+
+  const ejecutarEliminar = () => {
+    if (!confirmPayload) return;
+    const { tipo, id, texto } = confirmPayload;
+    if (tipo === 'plato') {
+      setPlatos(prev => prev.filter(p => p.id !== id));
+      agregarNotificacion('sistema', 'Plato eliminado', `${texto} ha sido eliminado del menú`);
     }
+    setConfirmOpen(false);
+    setConfirmPayload(null);
   };
 
   const toggleDisponibilidad = (id) => {
@@ -292,25 +310,23 @@ const VistaMenu = () => {
           </select>
         </div>
 
-        <button className="btn-nuevo-plato" onClick={abrirModalNuevo}>
+        <Boton variante="primario" className="btn btn--primario btn-nuevo-plato" onClick={abrirModalNuevo}>
           <span>+</span> Nuevo Plato
-        </button>
+        </Boton>
       </div>
 
       {/* Filtros por categoría */}
       <div className="categorias-filtro">
-        <button
-          className={`categoria-btn ${categoriaActiva === 'todos' ? 'activo' : ''}`}
-          onClick={() => setCategoriaActiva('todos')}
-        >
+        <Boton variante={categoriaActiva === 'todos' ? 'primario' : 'secundario'} className={`categoria-btn ${categoriaActiva === 'todos' ? 'activo' : ''}`} onClick={() => setCategoriaActiva('todos')}>
           <span className="categoria-icono">
-            <img src="https://img.icons8.com/ios-filled/20/000000/restaurant.png" alt="" style={{width:'20px', height:'20px'}} />
+            <img src="https://img.icons8.com/ios-filled/20/1a1a2e/restaurant.png" alt="" style={{width:'20px', height:'20px'}} />
           </span>
           <span className="categoria-nombre">Todos</span>
-        </button>
+        </Boton>
         {categorias.map(categoria => (
-          <button
+          <Boton
             key={categoria.id}
+            variante={categoriaActiva === categoria.id ? 'primario' : 'secundario'}
             className={`categoria-btn ${categoriaActiva === categoria.id ? 'activo' : ''}`}
             onClick={() => setCategoriaActiva(categoria.id)}
           >
@@ -321,7 +337,7 @@ const VistaMenu = () => {
             <span className="categoria-cantidad">
               {platos.filter(p => p.categoria === categoria.id).length}
             </span>
-          </button>
+          </Boton>
         ))}
       </div>
 
@@ -338,27 +354,13 @@ const VistaMenu = () => {
               <div className="plato-header">
                 <h3 className="plato-nombre">{plato.nombre}</h3>
                 <div className="plato-acciones">
-                  <button
-                    className="btn-accion"
-                    onClick={() => toggleDisponibilidad(plato.id)}
-                    title={plato.disponible ? 'Marcar como no disponible' : 'Marcar como disponible'}
-                  >
-                    <img src={plato.disponible ? 'https://img.icons8.com/ios-filled/20/000000/checkmark.png' : 'https://img.icons8.com/ios-filled/20/000000/cancel.png'} alt="" style={{width:'16px', height:'16px'}} />
-                  </button>
-                  <button
-                    className="btn-accion"
-                    onClick={() => abrirModalEditar(plato)}
-                    title="Editar plato"
-                  >
-                    <img src="https://img.icons8.com/ios-filled/20/000000/edit.png" alt="" style={{width:'16px', height:'16px'}} />
-                  </button>
-                  <button
-                    className="btn-accion eliminar"
-                    onClick={() => eliminarPlato(plato.id)}
-                    title="Eliminar plato"
-                  >
-                    <img src="https://img.icons8.com/ios-filled/20/000000/trash.png" alt="" style={{width:'16px', height:'16px'}} />
-                  </button>
+                  <Boton variante="ghost" className="btn-accion" onClick={() => toggleDisponibilidad(plato.id)} title={plato.disponible ? 'Marcar como no disponible' : 'Marcar como disponible'}>
+                    <img src={plato.disponible ? 'https://img.icons8.com/ios-filled/20/1a1a2e/checkmark.png' : 'https://img.icons8.com/ios-filled/20/1a1a2e/cancel.png'} alt="" style={{width:'16px', height:'16px'}} />
+                  </Boton>
+                  <Boton variante="ghost" className="btn-accion" onClick={() => abrirModalEditar(plato)} title="Editar plato">
+                    <img src="https://img.icons8.com/ios-filled/20/1a1a2e/edit.png" alt="" style={{width:'16px', height:'16px'}} />
+                  </Boton>
+                  <Boton variante="peligro" className="btn-accion eliminar" onClick={() => eliminarPlato(plato.id)} title="Eliminar plato" />
                 </div>
               </div>
 
@@ -369,7 +371,7 @@ const VistaMenu = () => {
                 <span className="plato-tiempo">{plato.tiempoPreparacion}min</span>
                 <div className="plato-popularidad">
                   <span className="popularidad-icono">
-                    <img src="https://img.icons8.com/ios-filled/20/000000/star--v1.png" alt="" style={{width:'16px', height:'16px'}} />
+                    <img src="https://img.icons8.com/ios-filled/20/1a1a2e/star--v1.png" alt="" style={{width:'16px', height:'16px'}} />
                   </span>
                   <span className="popularidad-valor">{plato.popularidad}%</span>
                 </div>
@@ -394,9 +396,9 @@ const VistaMenu = () => {
           <div className="modal-contenido menu-modal" onClick={(e) => e.stopPropagation()}>
             <div className="modal-header">
               <h2>{platoEditando ? 'Editar Plato' : 'Nuevo Plato'}</h2>
-              <button className="modal-cerrar" onClick={cerrarModal}>
-                <img src="https://img.icons8.com/ios-filled/20/000000/delete-sign.png" alt="Cerrar" style={{width:'20px', height:'20px'}} />
-              </button>
+              <Boton variante="ghost" className="modal-cerrar" onClick={cerrarModal}>
+                <img src="https://img.icons8.com/ios-filled/20/1a1a2e/delete-sign.png" alt="Cerrar" style={{width:'20px', height:'20px'}} />
+              </Boton>
             </div>
 
             <div className="modal-body">
@@ -480,11 +482,11 @@ const VistaMenu = () => {
                     <div className="alergenos-lista">
                       {formulario.alergenos.map(alergeno => (
                         <span key={alergeno} className="alergeno-tag editable">
-                          {alergeno}
-                          <button onClick={() => quitarAlergeno(alergeno)}>
-                            <img src="https://img.icons8.com/ios-filled/20/666666/delete-sign.png" alt="Quitar" style={{width:'12px', height:'12px'}} />
-                          </button>
-                        </span>
+                              {alergeno}
+                              <Boton variante="ghost" className="alergeno-quitar" onClick={() => quitarAlergeno(alergeno)}>
+                                <img src="https://img.icons8.com/ios-filled/20/1a1a2e/delete-sign.png" alt="Quitar" style={{width:'12px', height:'12px'}} />
+                              </Boton>
+                            </span>
                       ))}
                     </div>
                   </div>
@@ -505,14 +507,22 @@ const VistaMenu = () => {
             </div>
 
             <div className="modal-footer">
-              <button className="btn-cancelar" onClick={cerrarModal}>Cancelar</button>
-              <button className="btn-guardar" onClick={guardarPlato}>
+              <Boton variante="secundario" className="btn btn--secundario" onClick={cerrarModal}>Cancelar</Boton>
+              <Boton variante="primario" className="btn btn--primario" onClick={guardarPlato}>
                 {platoEditando ? 'Actualizar' : 'Crear'} Plato
-              </button>
+              </Boton>
             </div>
           </div>
         </div>
       )}
+      {/* Confirm dialog (eliminar plato) */}
+      <ConfirmDialog
+        abierto={confirmOpen}
+        titulo={confirmPayload ? `Eliminar ${confirmPayload.texto}` : 'Eliminar'}
+        mensaje={confirmPayload ? `¿Estás seguro de eliminar "${confirmPayload.texto}"? Esta acción no se puede deshacer.` : '¿Estás seguro?'}
+        onConfirm={ejecutarEliminar}
+        onCancel={() => { setConfirmOpen(false); setConfirmPayload(null); }}
+      />
     </div>
   );
 };

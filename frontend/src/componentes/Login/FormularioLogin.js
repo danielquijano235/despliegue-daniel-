@@ -18,6 +18,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { login } from '../../servicios/api';
+import Boton from '../Compartidos/Boton';
 
 const FormularioLogin = () => {
   // Estados del formulario
@@ -132,13 +133,9 @@ const FormularioLogin = () => {
         </div>
 
         {/* Botón de login */}
-        <button 
-          type="submit" 
-          className="btn-login"
-          disabled={cargando}
-        >
+        <Boton tipo="submit" variante="primario" onClick={null} disabled={cargando}>
           {cargando ? 'Iniciando sesión...' : 'Iniciar Sesión'}
-        </button>
+        </Boton>
 
         {/* Separador */}
         <div className="login-separador">

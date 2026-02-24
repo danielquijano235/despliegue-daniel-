@@ -10,6 +10,7 @@
  */
 
 import React, { useState, useEffect } from 'react';
+import Boton from '../Compartidos/Boton';
 import { obtenerTodosClientes, crearCliente } from '../../servicios/api';
 import { useNotificaciones } from '../../contextos/NotificacionesContext';
 
@@ -125,36 +126,44 @@ const VistaClientes = () => {
           <h1 className="dashboard-titulo">Clientes</h1>
           <p className="dashboard-fecha">{totalClientes} clientes registrados</p>
         </div>
-        <button className="btn-nueva-reserva" onClick={() => setModalVisible(true)}>
+        <Boton variante="primario" className="btn-nueva-reserva" onClick={() => setModalVisible(true)}>
           + Nuevo Cliente
-        </button>
+        </Boton>
       </div>
 
       {/* Tarjetas de estadísticas */}
       <div className="clientes-stats">
         <div className="cliente-stat-card">
-          <div className="cliente-stat-icono" style={{ backgroundColor: '#4A90E2' }}>👥</div>
+          <div className="cliente-stat-icono" style={{ backgroundColor: '#4A90E2' }}>
+            <img src="https://img.icons8.com/ios-filled/20/ffffff/people.png" alt="clientes" width="20" height="20" />
+          </div>
           <div>
             <div className="cliente-stat-numero">{totalClientes}</div>
             <div className="cliente-stat-label">Total Clientes</div>
           </div>
         </div>
         <div className="cliente-stat-card">
-          <div className="cliente-stat-icono" style={{ backgroundColor: '#10B981' }}>⭐</div>
+          <div className="cliente-stat-icono" style={{ backgroundColor: '#10B981' }}>
+            <img src="https://img.icons8.com/ios-filled/20/ffffff/star--v1.png" alt="frecuentes" width="20" height="20" />
+          </div>
           <div>
             <div className="cliente-stat-numero">{clientesActivos}</div>
             <div className="cliente-stat-label">Clientes Frecuentes</div>
           </div>
         </div>
         <div className="cliente-stat-card">
-          <div className="cliente-stat-icono" style={{ backgroundColor: '#8B5CF6' }}>🆕</div>
+          <div className="cliente-stat-icono" style={{ backgroundColor: '#8B5CF6' }}>
+            <img src="https://img.icons8.com/ios-filled/20/ffffff/plus-math.png" alt="nuevos" width="20" height="20" />
+          </div>
           <div>
             <div className="cliente-stat-numero">{clientesNuevos}</div>
             <div className="cliente-stat-label">Nuevos (30 días)</div>
           </div>
         </div>
         <div className="cliente-stat-card">
-          <div className="cliente-stat-icono" style={{ backgroundColor: '#FDB022' }}>🔄</div>
+          <div className="cliente-stat-icono" style={{ backgroundColor: '#FDB022' }}>
+            <img src="https://img.icons8.com/ios-filled/20/ffffff/refresh.png" alt="actividad" width="20" height="20" />
+          </div>
           <div>
             <div className="cliente-stat-numero">{totalVisitas}</div>
             <div className="cliente-stat-label">Total Visitas</div>
@@ -186,7 +195,10 @@ const VistaClientes = () => {
           </div>
         ) : clientesFiltrados.length === 0 ? (
           <div className="reservas-vacio">
-            <p>👥 No se encontraron clientes</p>
+            <div style={{ textAlign: 'center', padding: '24px', color: '#718096' }}>
+              <img src="https://img.icons8.com/ios-filled/48/1a1a2e/people.png" alt="sin clientes" width="48" height="48" />
+              <p style={{ marginTop: 12 }}>No se encontraron clientes</p>
+            </div>
           </div>
         ) : (
           <table className="reservas-tabla">
@@ -284,12 +296,12 @@ const VistaClientes = () => {
                 />
               </div>
               <div className="modal-botones">
-                <button type="button" className="btn-cancelar" onClick={() => setModalVisible(false)}>
+                <Boton tipo="button" variante="secundario" className="btn-cancelar" onClick={() => setModalVisible(false)}>
                   Cancelar
-                </button>
-                <button type="submit" className="btn-crear-reserva" disabled={creando}>
+                </Boton>
+                <Boton tipo="submit" variante="primario" className="btn-crear-reserva" disabled={creando}>
                   {creando ? 'Creando...' : 'Crear Cliente'}
-                </button>
+                </Boton>
               </div>
             </form>
           </div>

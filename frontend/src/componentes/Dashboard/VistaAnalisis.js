@@ -144,19 +144,19 @@ const VistaAnalisis = ({ metricas, datosGrafica }) => {
         <h3>Análisis de Tendencias</h3>
         <div className="tendencias-grid">
           <div className="tendencia-card">
-            <h4><img src="https://img.icons8.com/ios-filled/20/1e3a5f/growth.png" alt="" style={{width:'20px', height:'20px', marginRight:'8px'}} />Crecimiento Mensual</h4>
+            <h4><img src="https://img.icons8.com/ios-filled/20/1a1a2e/growth.png" alt="" style={{width:'20px', height:'20px', marginRight:'8px'}} />Crecimiento Mensual</h4>
             <p>Las reservas han aumentado un 15% respecto al mes anterior, mostrando una tendencia positiva constante.</p>
           </div>
           <div className="tendencia-card">
-            <h4><img src="https://img.icons8.com/ios-filled/20/1e3a5f/money.png" alt="" style={{width:'20px', height:'20px', marginRight:'8px'}} />Rentabilidad</h4>
+            <h4><img src="https://img.icons8.com/ios-filled/20/1a1a2e/money.png" alt="" style={{width:'20px', height:'20px', marginRight:'8px'}} />Rentabilidad</h4>
             <p>Los ingresos mensuales superan las expectativas con un crecimiento del 22%, impulsado por clientes recurrentes.</p>
           </div>
           <div className="tendencia-card">
-            <h4><img src="https://img.icons8.com/ios-filled/20/1e3a5f/conference-call.png" alt="" style={{width:'20px', height:'20px', marginRight:'8px'}} />Fidelización</h4>
+            <h4><img src="https://img.icons8.com/ios-filled/20/1a1a2e/conference-call.png" alt="" style={{width:'20px', height:'20px', marginRight:'8px'}} />Fidelización</h4>
             <p>El 67% de los clientes son recurrentes, lo que indica una alta satisfacción y lealtad a la marca.</p>
           </div>
           <div className="tendencia-card">
-            <h4><img src="https://img.icons8.com/ios-filled/20/1e3a5f/statistics.png" alt="" style={{width:'20px', height:'20px', marginRight:'8px'}} />Eficiencia Operativa</h4>
+            <h4><img src="https://img.icons8.com/ios-filled/20/1a1a2e/statistics.png" alt="" style={{width:'20px', height:'20px', marginRight:'8px'}} />Eficiencia Operativa</h4>
             <p>La tasa de cancelación se mantiene baja (3.2%) y la ocupación promedio es del 78.5%, optimizando recursos.</p>
           </div>
         </div>

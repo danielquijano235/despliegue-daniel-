@@ -20,6 +20,7 @@
  */
 
 import React, { useState } from 'react';
+import Boton from '../Compartidos/Boton';
 
 const ModalNuevaReserva = ({ visible, onCerrar, onCrear, clientes = [], mesas = [] }) => {
   // Estado del formulario con todos los campos
@@ -194,12 +195,12 @@ const ModalNuevaReserva = ({ visible, onCerrar, onCrear, clientes = [], mesas = 
 
           {/* Botones de acción */}
           <div className="modal-botones">
-            <button type="button" className="btn-cancelar" onClick={onCerrar}>
+            <Boton tipo="button" variante="secundario" className="btn-cancelar" onClick={onCerrar}>
               Cancelar
-            </button>
-            <button type="submit" className="btn-crear-reserva" disabled={cargando}>
+            </Boton>
+            <Boton tipo="submit" variante="primario" className="btn-crear-reserva" disabled={cargando}>
               {cargando ? 'Creando...' : 'Crear Reserva'}
-            </button>
+            </Boton>
           </div>
         </form>
       </div>

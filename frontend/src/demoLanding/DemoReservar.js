@@ -1,4 +1,5 @@
 import React from 'react';
+import Boton from '../componentes/Compartidos/Boton';
 
 const DemoReservar = ({ onOpenReserva }) => (
   <section className="demo-reservar" id="reservar">

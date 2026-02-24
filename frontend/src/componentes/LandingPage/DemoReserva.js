@@ -13,6 +13,7 @@
  */
 
 import React, { useState, useEffect } from 'react';
+import Boton from '../Compartidos/Boton';
 
 // ============================================
 // DATOS DE CONFIGURACIÓN
@@ -153,9 +154,9 @@ const DemoReserva = ({ visible, onCerrar }) => {
       <div className="demo-contenedor" onClick={e => e.stopPropagation()}>
 
         {/* ====== BOTÓN CERRAR ====== */}
-        <button className="demo-cerrar" onClick={onCerrar}>
+        <Boton variante="secundario" onClick={onCerrar} className="demo-cerrar btn--ghost">
           <img src="https://img.icons8.com/ios-filled/22/ffffff/delete-sign.png" alt="cerrar" width="22" height="22" />
-        </button>
+        </Boton>
 
         {/* ====== HEADER (modal específico) ====== */}
         <div className="demo-modal-header">
@@ -207,38 +208,41 @@ const DemoReserva = ({ visible, onCerrar }) => {
               <p className="demo-paso-descripcion">Selecciona el número de persnas</p>
 
               <div className="demo-personas-selector">
-                <button
+                <Boton
+                  variante="secundario"
                   className="demo-personas-btn"
                   onClick={() => setPersonas(prev => Math.max(1, prev - 1))}
                   disabled={personas <= 1}
                 >
                   <img src="https://img.icons8.com/ios-filled/20/ffffff/minus-math.png" alt="-" width="20" height="20" />
-                </button>
+                </Boton>
                 <div className="demo-personas-numero">
                   <span className="demo-personas-valor">{personas}</span>
                   <span className="demo-personas-texto">
                     {personas === 1 ? 'persona' : 'personas'}
                   </span>
                 </div>
-                <button
+                <Boton
+                  variante="secundario"
                   className="demo-personas-btn"
                   onClick={() => setPersonas(prev => Math.min(12, prev + 1))}
                   disabled={personas >= 12}
                 >
                   <img src="https://img.icons8.com/ios-filled/20/ffffff/plus-math.png" alt="+" width="20" height="20" />
-                </button>
+                </Boton>
               </div>
 
               {/* Opciones rápidas */}
               <div className="demo-personas-rapidas">
                 {[1, 2, 4, 6, 8].map(n => (
-                  <button
+                  <Boton
                     key={n}
+                    variante={personas === n ? 'primario' : 'secundario'}
                     className={`demo-persona-rapida ${personas === n ? 'activa' : ''}`}
                     onClick={() => setPersonas(n)}
                   >
                     {n}
-                  </button>
+                  </Boton>
                 ))}
               </div>
 
@@ -247,10 +251,10 @@ const DemoReserva = ({ visible, onCerrar }) => {
                 Para grupos mayores a 12, se recomienda reserva especial
               </p>
 
-              <button className="demo-btn-siguiente" onClick={irSiguiente}>
+              <Boton variante="primario" className="demo-btn-siguiente" onClick={irSiguiente}>
                 Siguiente
                 <img src="https://img.icons8.com/ios-filled/16/ffffff/forward--v1.png" alt="→" width="16" height="16" />
-              </button>
+              </Boton>
             </div>
           )}
 
@@ -263,13 +267,13 @@ const DemoReserva = ({ visible, onCerrar }) => {
               <div className="demo-calendario">
                 {/* Header del calendario */}
                 <div className="demo-cal-header">
-                  <button className="demo-cal-nav" onClick={mesAnterior}>
+                  <Boton variante="secundario" className="demo-cal-nav" onClick={mesAnterior}>
                     <img src="https://img.icons8.com/ios-filled/16/FDB022/back.png" alt="←" width="16" height="16" />
-                  </button>
+                  </Boton>
                   <span className="demo-cal-mes">{MESES[mesActual]} {anioActual}</span>
-                  <button className="demo-cal-nav" onClick={mesSiguiente}>
+                  <Boton variante="secundario" className="demo-cal-nav" onClick={mesSiguiente}>
                     <img src="https://img.icons8.com/ios-filled/16/FDB022/forward--v1.png" alt="→" width="16" height="16" />
-                  </button>
+                  </Boton>
                 </div>
 
                 {/* Días de la semana */}
@@ -282,14 +286,15 @@ const DemoReserva = ({ visible, onCerrar }) => {
                 {/* Grid de días */}
                 <div className="demo-cal-grid">
                   {diasMes.map((dia, i) => (
-                    <button
+                    <Boton
                       key={i}
+                      variante={dia === diaSeleccionado ? 'primario' : 'secundario'}
                       className={`demo-cal-dia ${!dia ? 'vacio' : ''} ${esDiaPasado(dia) ? 'pasado' : ''} ${dia === diaSeleccionado ? 'seleccionado' : ''} ${dia === hoy.getDate() && mesActual === hoy.getMonth() && anioActual === hoy.getFullYear() ? 'hoy' : ''}`}
                       onClick={() => dia && !esDiaPasado(dia) && setDiaSeleccionado(dia)}
                       disabled={!dia || esDiaPasado(dia)}
                     >
                       {dia}
-                    </button>
+                    </Boton>
                   ))}
                 </div>
               </div>
@@ -302,18 +307,14 @@ const DemoReserva = ({ visible, onCerrar }) => {
               )}
 
               <div className="demo-botones-nav">
-                <button className="demo-btn-anterior" onClick={irAnterior}>
+                <Boton variante="secundario" className="demo-btn-anterior" onClick={irAnterior}>
                   <img src="https://img.icons8.com/ios-filled/16/999999/back.png" alt="←" width="16" height="16" />
                   Atrás
-                </button>
-                <button
-                  className="demo-btn-siguiente"
-                  onClick={irSiguiente}
-                  disabled={!diaSeleccionado}
-                >
+                </Boton>
+                <Boton variante="primario" className="demo-btn-siguiente" onClick={irSiguiente} disabled={!diaSeleccionado}>
                   Siguiente
                   <img src="https://img.icons8.com/ios-filled/16/ffffff/forward--v1.png" alt="→" width="16" height="16" />
-                </button>
+                </Boton>
               </div>
             </div>
           )}
@@ -332,15 +333,16 @@ const DemoReserva = ({ visible, onCerrar }) => {
                   </span>
                   <div className="demo-horarios-grid">
                     {HORARIOS_DISPONIBLES.filter(h => h.includes('12:') || h.includes('1:') || h.includes('2:')).map(hora => (
-                      <button
+                      <Boton
                         key={hora}
+                        variante={horaSeleccionada === hora ? 'primario' : 'secundario'}
                         className={`demo-hora-btn ${horaSeleccionada === hora ? 'seleccionada' : ''} ${horariosOcupados.includes(hora) ? 'ocupada' : ''}`}
                         onClick={() => !horariosOcupados.includes(hora) && setHoraSeleccionada(hora)}
                         disabled={horariosOcupados.includes(hora)}
                       >
                         {hora}
                         {horariosOcupados.includes(hora) && <span className="demo-hora-ocupada">Ocupado</span>}
-                      </button>
+                      </Boton>
                     ))}
                   </div>
                 </div>
@@ -381,18 +383,14 @@ const DemoReserva = ({ visible, onCerrar }) => {
               </div>
 
               <div className="demo-botones-nav">
-                <button className="demo-btn-anterior" onClick={irAnterior}>
+                <Boton variante="secundario" className="demo-btn-anterior" onClick={irAnterior}>
                   <img src="https://img.icons8.com/ios-filled/16/999999/back.png" alt="←" width="16" height="16" />
                   Atrás
-                </button>
-                <button
-                  className="demo-btn-confirmar"
-                  onClick={confirmarReserva}
-                  disabled={!horaSeleccionada}
-                >
+                </Boton>
+                <Boton variante="primario" className="demo-btn-confirmar" onClick={confirmarReserva} disabled={!horaSeleccionada}>
                   <img src="https://img.icons8.com/ios-filled/18/ffffff/checkmark--v1.png" alt="✓" width="18" height="18" />
                   Confirmar Reserva
-                </button>
+                </Boton>
               </div>
             </div>
           )}
@@ -430,7 +428,7 @@ const DemoReserva = ({ visible, onCerrar }) => {
              
 
               <div className="demo-confirmacion-acciones">
-                <button className="demo-btn-reiniciar" onClick={() => {
+                <Boton variante="secundario" className="demo-btn-reiniciar" onClick={() => {
                   setPaso(1);
                   setPersonas(2);
                   setDiaSeleccionado(null);
@@ -440,10 +438,10 @@ const DemoReserva = ({ visible, onCerrar }) => {
                 }}>
                   <img src="https://img.icons8.com/ios-filled/16/FDB022/refresh--v1.png" alt="" width="16" height="16" />
                   Probar otra vez
-                </button>
-                <button className="demo-btn-empezar" onClick={onCerrar}>
+                </Boton>
+                <Boton variante="primario" className="demo-btn-empezar" onClick={onCerrar}>
                   ¡Lo quiero para mi restaurante!
-                </button>
+                </Boton>
               </div>
             </div>
           )}

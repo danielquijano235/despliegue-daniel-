@@ -244,7 +244,7 @@ const PaginaDashboard = () => {
                 <GraficaReservas datos={graficaActual} />
 
                 {/* Lista de próximas reservas */}
-                <ListaReservas reservas={reservasActuales} />
+                  <ListaReservas reservas={reservasActuales} onVerTodas={() => setSeccionActiva('reservas')} />
               </div>
             </>
           )}

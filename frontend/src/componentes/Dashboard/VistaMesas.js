@@ -21,6 +21,8 @@
 
 import React, { useState } from 'react';
 import { useNotificaciones } from '../../contextos/NotificacionesContext';
+import Boton from '../Compartidos/Boton';
+import ConfirmDialog from '../Compartidos/ConfirmDialog';
 
 // Datos de ejemplo
 const mesasIniciales = [
@@ -62,11 +64,11 @@ const configEstado = {
 
 // Iconos de ubicación
 const iconoUbicacion = {
-  Interior: 'https://img.icons8.com/ios-filled/16/999999/home.png',
-  Ventana: 'https://img.icons8.com/ios-filled/16/999999/sun--v1.png',
-  Terraza: 'https://img.icons8.com/ios-filled/16/999999/outdoor-swimming-pool.png',
-  Barra: 'https://img.icons8.com/ios-filled/16/999999/bar-table.png',
-  Privado: 'https://img.icons8.com/ios-filled/16/999999/lock--v1.png',
+  Interior: 'https://img.icons8.com/ios-filled/16/1a1a2e/home.png',
+  Ventana: 'https://img.icons8.com/ios-filled/16/1a1a2e/sun--v1.png',
+  Terraza: 'https://img.icons8.com/ios-filled/16/1a1a2e/outdoor-swimming-pool.png',
+  Barra: 'https://img.icons8.com/ios-filled/16/1a1a2e/bar-table.png',
+  Privado: 'https://img.icons8.com/ios-filled/16/1a1a2e/lock--v1.png',
 };
 
 const VistaMesas = () => {
@@ -83,6 +85,8 @@ const VistaMesas = () => {
   });
 
   const { agregarNotificacion } = useNotificaciones();
+  const [confirmOpen, setConfirmOpen] = useState(false);
+  const [confirmPayload, setConfirmPayload] = useState(null);
 
   // Filtrar mesas
   const mesasFiltradas = mesas.filter(m => {
@@ -102,12 +106,12 @@ const VistaMesas = () => {
   const manejarAgregarMesa = (e) => {
     e.preventDefault();
     if (!formulario.numero) {
-      alert('El número de mesa es obligatorio');
+      agregarNotificacion('info', 'Validación', 'El número de mesa es obligatorio');
       return;
     }
     // Verificar que no exista una mesa con ese número
     if (mesas.some(m => m.numero === parseInt(formulario.numero))) {
-      alert('Ya existe una mesa con ese número');
+      agregarNotificacion('info', 'Validación', 'Ya existe una mesa con ese número');
       return;
     }
     const nuevaMesa = {
@@ -138,12 +142,23 @@ const VistaMesas = () => {
     setMesaSeleccionada(null);
   };
 
-  // Eliminar mesa
+  // Solicitar confirmación para eliminar mesa (usa modal en vez de window.confirm)
   const manejarEliminarMesa = (id) => {
     const mesa = mesas.find(m => m.id === id);
-    if (!window.confirm(`¿Estás seguro de eliminar la Mesa #${mesa.numero}?`)) return;
-    setMesas(prev => prev.filter(m => m.id !== id));
-    agregarNotificacion('sistema', 'Mesa eliminada', `Mesa #${mesa.numero} ha sido eliminada del sistema`);
+    setConfirmPayload({ tipo: 'mesa', id, texto: `Mesa #${mesa.numero}` });
+    setConfirmOpen(true);
+  };
+
+  const ejecutarEliminar = () => {
+    if (!confirmPayload) return;
+    const { tipo, id } = confirmPayload;
+    if (tipo === 'mesa') {
+      const mesa = mesas.find(m => m.id === id);
+      setMesas(prev => prev.filter(m => m.id !== id));
+      agregarNotificacion('sistema', 'Mesa eliminada', `Mesa ${mesa ? `#${mesa.numero}` : id} ha sido eliminada del sistema`);
+    }
+    setConfirmOpen(false);
+    setConfirmPayload(null);
   };
 
   return (
@@ -154,10 +169,10 @@ const VistaMesas = () => {
           <h1 className="modulo-titulo">Gestión de Mesas</h1>
           <p className="modulo-subtitulo">{mesas.length} mesas en total · {totalDisponibles} disponibles ahora</p>
         </div>
-        <button className="mesas-btn-agregar" onClick={() => setModalAgregar(true)}>
-          <img src="https://img.icons8.com/ios-filled/18/1a1a2e/plus-math.png" alt="+" width="18" height="18" />
+        <Boton variante="primario" className="btn btn--primario mesas-btn-agregar" onClick={() => setModalAgregar(true)}>
+            <img src="https://img.icons8.com/ios-filled/18/1a1a2e/plus-math.png" alt="+" width="18" height="18" />
           Nueva Mesa
-        </button>
+        </Boton>
       </div>
 
       {/* ====== TARJETAS RESUMEN ====== */}
@@ -221,8 +236,9 @@ const VistaMesas = () => {
         </div>
         <div className="mesas-filtros-rapidos">
           {['todas', 'disponible', 'ocupada', 'reservada'].map(estado => (
-            <button
+            <Boton
               key={estado}
+              variante={filtroEstado === estado ? 'primario' : 'secundario'}
               className={`mesas-filtro-btn ${filtroEstado === estado ? 'activo' : ''}`}
               onClick={() => setFiltroEstado(estado)}
             >
@@ -230,7 +246,7 @@ const VistaMesas = () => {
               <span className="mesas-filtro-count">
                 {estado === 'todas' ? mesas.length : mesas.filter(m => m.estado === estado).length}
               </span>
-            </button>
+            </Boton>
           ))}
         </div>
       </div>
@@ -255,7 +271,7 @@ const VistaMesas = () => {
               <h3>Mesa {mesa.numero}</h3>
               <div className="mesa-tarjeta-detalles">
                 <div className="mesa-tarjeta-detalle">
-                  <img src="https://img.icons8.com/ios-filled/14/999999/conference-call.png" alt="" width="14" height="14" />
+                  <img src="https://img.icons8.com/ios-filled/14/1a1a2e/conference-call.png" alt="" width="14" height="14" />
                   <span>{mesa.capacidad} personas</span>
                 </div>
                 <div className="mesa-tarjeta-detalle">
@@ -267,21 +283,11 @@ const VistaMesas = () => {
 
             {/* Acciones */}
             <div className="mesa-tarjeta-acciones">
-              <button
-                className="mesa-btn-estado"
-                onClick={() => { setMesaSeleccionada(mesa); setModalEstado(true); }}
-                title="Cambiar estado"
-              >
-                <img src="https://img.icons8.com/ios-filled/16/4A90E2/swap.png" alt="" width="16" height="16" />
+              <Boton variante="secundario" className="mesa-btn-estado" onClick={() => { setMesaSeleccionada(mesa); setModalEstado(true); }} title="Cambiar estado">
+                <img src="https://img.icons8.com/ios-filled/16/1a1a2e/swap.png" alt="" width="16" height="16" />
                 Cambiar estado
-              </button>
-              <button
-                className="mesa-btn-eliminar"
-                onClick={() => manejarEliminarMesa(mesa.id)}
-                title="Eliminar mesa"
-              >
-                <img src="https://img.icons8.com/ios-filled/16/EF4444/trash--v1.png" alt="" width="16" height="16" />
-              </button>
+              </Boton>
+              <Boton variante="peligro" className="btn btn--peligro mesa-btn-eliminar" onClick={() => manejarEliminarMesa(mesa.id)} title="Eliminar mesa" />
             </div>
           </div>
         ))}
@@ -290,7 +296,7 @@ const VistaMesas = () => {
         <div className="mesa-tarjeta mesa-tarjeta-agregar" onClick={() => setModalAgregar(true)}>
           <div className="mesa-agregar-contenido">
             <div className="mesa-agregar-icono">
-              <img src="https://img.icons8.com/ios-filled/28/cccccc/plus-math.png" alt="+" width="28" height="28" />
+              <img src="https://img.icons8.com/ios-filled/28/1a1a2e/plus-math.png" alt="+" width="28" height="28" />
             </div>
             <span>Agregar mesa</span>
           </div>
@@ -299,7 +305,7 @@ const VistaMesas = () => {
 
       {mesasFiltradas.length === 0 && (
         <div className="mesas-vacio">
-          <img src="https://img.icons8.com/ios-filled/48/cccccc/restaurant-table.png" alt="" width="48" height="48" />
+          <img src="https://img.icons8.com/ios-filled/48/1a1a2e/restaurant-table.png" alt="" width="48" height="48" />
           <p>No se encontraron mesas con los filtros aplicados</p>
         </div>
       )}
@@ -310,9 +316,9 @@ const VistaMesas = () => {
           <div className="modal mesas-modal" onClick={e => e.stopPropagation()}>
             <div className="mesas-modal-header">
               <h2>Agregar Nueva Mesa</h2>
-              <button className="mesas-modal-cerrar" onClick={() => setModalAgregar(false)}>
-                <img src="https://img.icons8.com/ios-filled/20/999999/delete-sign.png" alt="cerrar" width="20" height="20" />
-              </button>
+              <Boton variante="ghost" className="mesas-modal-cerrar" onClick={() => setModalAgregar(false)}>
+                <img src="https://img.icons8.com/ios-filled/20/1a1a2e/delete-sign.png" alt="cerrar" width="20" height="20" />
+              </Boton>
             </div>
 
             <form className="mesas-modal-form" onSubmit={manejarAgregarMesa}>
@@ -355,13 +361,13 @@ const VistaMesas = () => {
               </div>
 
               <div className="mesas-modal-acciones">
-                <button type="button" className="mesas-modal-btn-cancelar" onClick={() => setModalAgregar(false)}>
+                <Boton tipo="button" variante="secundario" className="btn btn--secundario mesas-modal-btn-cancelar" onClick={() => setModalAgregar(false)}>
                   Cancelar
-                </button>
-                <button type="submit" className="mesas-modal-btn-guardar">
+                </Boton>
+                <Boton tipo="submit" variante="primario" className="btn btn--primario mesas-modal-btn-guardar">
                   <img src="https://img.icons8.com/ios-filled/16/1a1a2e/plus-math.png" alt="" width="16" height="16" />
                   Agregar Mesa
-                </button>
+                </Boton>
               </div>
             </form>
           </div>
@@ -374,9 +380,9 @@ const VistaMesas = () => {
           <div className="modal mesas-modal mesas-modal-estado" onClick={e => e.stopPropagation()}>
             <div className="mesas-modal-header">
               <h2>Cambiar Estado — Mesa #{mesaSeleccionada.numero}</h2>
-              <button className="mesas-modal-cerrar" onClick={() => { setModalEstado(false); setMesaSeleccionada(null); }}>
-                <img src="https://img.icons8.com/ios-filled/20/999999/delete-sign.png" alt="cerrar" width="20" height="20" />
-              </button>
+              <Boton variante="ghost" className="mesas-modal-cerrar" onClick={() => { setModalEstado(false); setMesaSeleccionada(null); }}>
+                <img src="https://img.icons8.com/ios-filled/20/1a1a2e/delete-sign.png" alt="cerrar" width="20" height="20" />
+              </Boton>
             </div>
 
             <p className="mesas-modal-estado-actual">
@@ -388,8 +394,9 @@ const VistaMesas = () => {
 
             <div className="mesas-estado-opciones">
               {Object.entries(configEstado).map(([estado, config]) => (
-                <button
+                <Boton
                   key={estado}
+                  variante={mesaSeleccionada.estado === estado ? 'primario' : 'secundario'}
                   className={`mesas-estado-opcion ${mesaSeleccionada.estado === estado ? 'actual' : ''}`}
                   onClick={() => manejarCambiarEstado(estado)}
                   disabled={mesaSeleccionada.estado === estado}
@@ -405,12 +412,20 @@ const VistaMesas = () => {
                   {mesaSeleccionada.estado === estado && (
                     <span className="mesas-estado-opcion-badge">Actual</span>
                   )}
-                </button>
+                </Boton>
               ))}
             </div>
           </div>
         </div>
       )}
+      {/* Confirm dialog (eliminar mesa) */}
+      <ConfirmDialog
+        abierto={confirmOpen}
+        titulo={confirmPayload ? `Eliminar ${confirmPayload.texto}` : 'Eliminar'}
+        mensaje={confirmPayload ? `¿Estás seguro de eliminar ${confirmPayload.texto}? Esta acción no se puede deshacer.` : '¿Estás seguro?'}
+        onConfirm={ejecutarEliminar}
+        onCancel={() => { setConfirmOpen(false); setConfirmPayload(null); }}
+      />
     </div>
   );
 };

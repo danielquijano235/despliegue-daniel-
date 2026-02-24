@@ -14,6 +14,7 @@
 
 import React from 'react';
 
+// Prefer CSS-driven classes but keep inline fallbacks for safety
 const estilosVariante = {
   primario: {
     backgroundColor: '#FDB022',
@@ -35,7 +36,7 @@ const estilosVariante = {
   },
 };
 
-const Boton = ({ children, variante = 'primario', onClick, disabled = false, tipo = 'button' }) => {
+const Boton = React.forwardRef(({ children, variante = 'primario', onClick, disabled = false, tipo = 'button', className = '' }, ref) => {
   const estilos = {
     ...estilosVariante[variante],
     padding: '10px 22px',
@@ -47,11 +48,29 @@ const Boton = ({ children, variante = 'primario', onClick, disabled = false, tip
     fontFamily: 'inherit',
   };
 
+  // prefer CSS class .btn when available for full design control
+  const clase = `btn btn--${variante} ${className}`.trim();
+
+  // Determine if there is any children to render
+  const hasChildren = React.Children.count(children) > 0;
+
+  // Default icon for 'peligro' when no children provided: use Icons8 image (white)
+  const defaultPeligroIcon = (
+    <img
+      src="https://img.icons8.com/ios-filled/16/ffffff/trash--v1.png"
+      alt="Eliminar"
+      width="16"
+      height="16"
+      aria-hidden="true"
+      focusable="false"
+    />
+  );
+
   return (
-    <button style={estilos} onClick={onClick} disabled={disabled} type={tipo}>
-      {children}
+    <button ref={ref} className={clase} style={estilos} onClick={onClick} disabled={disabled} type={tipo}>
+      {hasChildren ? children : (variante === 'peligro' ? defaultPeligroIcon : null)}
     </button>
   );
-};
+});
 
 export default Boton;

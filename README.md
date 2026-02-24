@@ -230,4 +230,4 @@ Si el backend no está conectado, el dashboard muestra datos estáticos de ejemp
 Si el backend no está conectado, el dashboard muestra datos estáticos de ejemplo. Esto es normal para poder ver la interfaz sin backend. Los datos reales se cargarán cuando el backend esté configurado correctamente.
 
 
-
+git push origin main

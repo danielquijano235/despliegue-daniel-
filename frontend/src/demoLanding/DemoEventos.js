@@ -1,4 +1,5 @@
 import React from 'react';
+import Boton from '../componentes/Compartidos/Boton';
 
 const sampleEvents = [
   {
@@ -44,9 +45,7 @@ const DemoEventos = ({ onOpenReserva }) => {
                 <h3 className="event-title">{ev.title}</h3>
                 <p className="event-desc">{ev.desc}</p>
                 <div className="event-actions">
-                  <button className="demo-reservar-btn" onClick={() => onOpenReserva && onOpenReserva(ev)}>
-                    Reservar evento
-                  </button>
+                  <Boton variante="primario" onClick={() => onOpenReserva && onOpenReserva(ev)} className="demo-reservar-btn">Reservar evento</Boton>
                 </div>
               </div>
             </article>
