@@ -36,6 +36,41 @@
 }
 .demo-landing .demo-header {
   border-radius: 0 !important;
+  /* translucent, blurred overlay to sit over the hero image (difuminado) */
+  background: rgba(255,255,255,0.06);
+  -webkit-backdrop-filter: blur(6px);
+  backdrop-filter: blur(6px);
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 5;
+  padding: 16px 22px; /* un poco más alto */
+  border-bottom: 1px solid rgba(255,255,255,0.06);
+}
+
+/* Ensure header layout is a centered flex row so left/nav/logo/right align vertically */
+.demo-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.demo-header .logo {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
+}
+
+/* slight increase of logo size to match taller header */
+.demo-header .logo { font-size: 1.35rem; }
+
+.demo-nav {
+  display: flex;
+  gap: 2.2rem;
+  align-items: center;
 }
 
 .demo-header .logo {
