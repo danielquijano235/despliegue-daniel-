@@ -565,8 +565,10 @@
   margin: 0 auto 12px auto;
   text-align: center;
   color: #fff;
+  overflow-x: hidden; /* prevent horizontal scrollbar */
+  box-sizing: border-box;
 }
-.demo-reservar-inner { max-width: 1200px; margin: 0 auto; }
+.demo-reservar-inner { max-width: 1200px; margin: 0 auto; box-sizing: border-box; padding: 0 12px; }
 .reservas-title {
   font-family: 'Georgia', serif;
   font-size: 2.4rem;
@@ -605,6 +607,7 @@
   max-width: 880px;
   width: 100%;
   color: #fff;
+  box-sizing: border-box;
 }
 .horarios-title { margin: 0 0 6px 0; font-size: 1.35rem; }
 .horarios-sub { margin: 0 0 12px 0; font-style: italic; color: rgba(255,255,255,0.85); }

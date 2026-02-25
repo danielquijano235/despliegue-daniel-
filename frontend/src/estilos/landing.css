@@ -1310,6 +1310,11 @@
     0 0 0 1px rgba(255, 255, 255, 0.05);
   animation: demoSlideUp 0.4s cubic-bezier(0.16, 1, 0.3, 1);
 }
+/* prevent horizontal overflow inside modal */
+.demo-contenedor {
+  overflow-x: hidden;
+  box-sizing: border-box;
+}
 
 @keyframes demoSlideUp {
   from {
@@ -1332,23 +1337,23 @@
 
 /* Header específico del modal: opaco para evitar 'ghosting' del fondo */
 .demo-modal-header {
-  background: #ffffff; /* fondo sólido para tapar el contenido detrás */
-  color: #1f2937; /* texto oscuro para contraste */
+  background: var(--color-azul-oscuro); /* match footer / brand dark blue */
+  color: #ffffff; /* light text on dark background */
   padding: 20px 22px;
   text-align: center;
   border-radius: 20px 20px 0 0;
-  box-shadow: 0 8px 24px rgba(0,0,0,0.06);
+  box-shadow: 0 10px 30px rgba(0,0,0,0.36);
   position: relative;
 }
 .demo-modal-header .demo-header-icono {
-  background: rgba(253,176,34,0.06);
-  border: 1px solid rgba(253,176,34,0.12);
+  background: rgba(255,255,255,0.06);
+  border: 1px solid rgba(255,255,255,0.08);
 }
 .demo-modal-header .demo-header-titulo {
-  color: #111827;
+  color: #ffffff;
 }
 .demo-modal-header .demo-header-subtitulo {
-  color: #6b7280;
+  color: rgba(255,255,255,0.9);
 }
 .demo-contenedor::-webkit-scrollbar-thumb {
   background: #ddd;
@@ -1360,22 +1365,33 @@
   position: absolute;
   top: 16px;
   right: 16px;
-  width: 36px;
-  height: 36px;
+  width: 40px;
+  height: 40px;
   border-radius: 50%;
-  background: rgba(0, 0, 0, 0.15);
+  background: rgba(255,255,255,0.06); /* light translucent on dark header */
+  border: 1px solid rgba(255,255,255,0.06);
+  color: #fff;
   border: none;
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
   z-index: 10;
-  transition: all 0.2s ease;
+  transition: background 160ms ease, transform 160ms ease, box-shadow 160ms ease;
 }
 
 .demo-cerrar:hover {
-  background: rgba(0, 0, 0, 0.3);
-  transform: rotate(90deg);
+  background: rgba(255,255,255,0.12);
+  transform: none;
+  box-shadow: 0 6px 18px rgba(0,0,0,0.28);
+}
+
+.demo-cerrar .demo-close-x {
+  font-size: 18px;
+  line-height: 1;
+  font-weight: 700;
+  color: #fff;
+  display: inline-block;
 }
 
 /* ====== HEADER ====== */
@@ -1523,20 +1539,30 @@
   width: 52px;
   height: 52px;
   border-radius: 16px;
-  border: none;
-  background: var(--color-azul-oscuro);
-  color: white;
+  border: 1px solid rgba(30,58,95,0.06);
+  background: #ffffff; /* keep white as requested */
+  color: #111827; /* dark sign color */
   display: flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition: transform 160ms ease, box-shadow 160ms ease, border-color 160ms ease;
   font-size: 1.4rem;
+  box-shadow: 0 4px 10px rgba(16,24,40,0.06);
 }
 
 .demo-personas-btn:hover:not(:disabled) {
-  background: #2a4a6b;
-  transform: scale(1.08);
+  transform: scale(1.03);
+  border-color: var(--color-azul-oscuro);
+  box-shadow: 0 8px 20px rgba(16,24,40,0.08);
+}
+
+.demo-personas-sign {
+  font-size: 22px;
+  line-height: 1;
+  font-weight: 900;
+  color: #0b1220 !important; /* ensure visibility over white background */
+  display: inline-block;
 }
 
 .demo-personas-btn:disabled {
@@ -1667,6 +1693,9 @@
   display: grid;
   grid-template-columns: repeat(7, 1fr);
   gap: 4px;
+  width: 100%;
+  min-width: 0; /* allow grid items to shrink inside container */
+  grid-auto-rows: 1fr;
 }
 
 .demo-cal-dia {
@@ -1680,6 +1709,7 @@
   cursor: pointer;
   transition: all 0.15s ease;
   font-family: inherit;
+  min-width: 0; /* prevent forcing grid to overflow */
 }
 
 .demo-cal-dia:hover:not(.vacio):not(.pasado):not(.seleccionado) {
@@ -1854,6 +1884,12 @@
   margin-left: auto;
 }
 
+/* When the 'Siguiente' button appears alone inside a step, push it to the right */
+.demo-paso > .demo-btn-siguiente {
+  display: inline-flex;
+  margin-left: auto;
+}
+
 .demo-btn-siguiente:hover:not(:disabled),
 .demo-btn-confirmar:hover:not(:disabled) {
   background: var(--color-amarillo-hover);
@@ -1903,6 +1939,16 @@
 /* ====== CONFIRMACIÓN ====== */
 .demo-paso-confirmacion {
   text-align: center;
+}
+
+/* Place 'Siguiente' to the right specifically for the Personas step */
+.demo-paso-personas {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.demo-paso-personas > .demo-btn-siguiente {
+  align-self: flex-end;
 }
 
 .demo-confirmacion-check {

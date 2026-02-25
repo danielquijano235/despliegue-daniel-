@@ -154,8 +154,8 @@ const DemoReserva = ({ visible, onCerrar }) => {
       <div className="demo-contenedor" onClick={e => e.stopPropagation()}>
 
         {/* ====== BOTÓN CERRAR ====== */}
-        <Boton variante="secundario" onClick={onCerrar} className="demo-cerrar btn--ghost">
-          <img src="https://img.icons8.com/ios-filled/22/ffffff/delete-sign.png" alt="cerrar" width="22" height="22" />
+        <Boton variante="secundario" onClick={onCerrar} className="demo-cerrar btn--ghost" aria-label="Cerrar demo" title="Cerrar">
+          <span className="demo-close-x" aria-hidden="true">×</span>
         </Boton>
 
         {/* ====== HEADER (modal específico) ====== */}
@@ -208,28 +208,30 @@ const DemoReserva = ({ visible, onCerrar }) => {
               <p className="demo-paso-descripcion">Selecciona el número de persnas</p>
 
               <div className="demo-personas-selector">
-                <Boton
-                  variante="secundario"
+                <button
                   className="demo-personas-btn"
                   onClick={() => setPersonas(prev => Math.max(1, prev - 1))}
                   disabled={personas <= 1}
+                  aria-label="Restar personas"
+                  title="Restar"
                 >
-                  <img src="https://img.icons8.com/ios-filled/20/ffffff/minus-math.png" alt="-" width="20" height="20" />
-                </Boton>
+                  <span className="demo-personas-sign">−</span>
+                </button>
                 <div className="demo-personas-numero">
                   <span className="demo-personas-valor">{personas}</span>
                   <span className="demo-personas-texto">
                     {personas === 1 ? 'persona' : 'personas'}
                   </span>
                 </div>
-                <Boton
-                  variante="secundario"
+                <button
                   className="demo-personas-btn"
                   onClick={() => setPersonas(prev => Math.min(12, prev + 1))}
                   disabled={personas >= 12}
+                  aria-label="Sumar personas"
+                  title="Sumar"
                 >
-                  <img src="https://img.icons8.com/ios-filled/20/ffffff/plus-math.png" alt="+" width="20" height="20" />
-                </Boton>
+                  <span className="demo-personas-sign">+</span>
+                </button>
               </div>
 
               {/* Opciones rápidas */}
@@ -447,11 +449,7 @@ const DemoReserva = ({ visible, onCerrar }) => {
           )}
         </div>
 
-        {/* ====== FOOTER ====== */}
-        <div className="demo-footer">
-          <img src="https://img.icons8.com/ios-filled/14/666666/lock-2.png" alt="" width="14" height="14" />
-          <span>Esta demo es interactiva</span>
-        </div>
+        {/* footer removed from modal to prevent extra scroll */}
       </div>
     </div>
   );
