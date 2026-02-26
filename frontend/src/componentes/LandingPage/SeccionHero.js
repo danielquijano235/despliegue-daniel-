@@ -46,7 +46,7 @@ const SeccionHero = () => {
           {/* Botones de acción */}
           <div className="hero-botones">
             <Boton variante="primario" onClick={() => navigate('/login')}>Empezar Ahora →</Boton>
-            <Boton variante="secundario" onClick={() => setMostrarDemo(true)}>
+            <Boton className="hero-demo-btn" variante="secundario" onClick={() => setMostrarDemo(true)}>
               <svg
                 width="14"
                 height="14"
@@ -64,7 +64,7 @@ const SeccionHero = () => {
 
           {/* Botón destacado para la demo de restaurante */}
           <div style={{marginTop:'1.5rem', textAlign:'left', marginBottom:'2.5rem'}}>
-            <Boton variante="secundario" onClick={() => navigate('/demo-landing')}>
+            <Boton className="hero-preview-btn" variante="secundario" onClick={() => navigate('/demo-landing')}>
               Cómo se vería tu restaurante
             </Boton>
           </div>

@@ -37,8 +37,10 @@ const estilosVariante = {
 };
 
 const Boton = React.forwardRef(({ children, variante = 'primario', onClick, disabled = false, tipo = 'button', className = '' }, ref) => {
+  // For the 'secundario' variant we prefer CSS classes to control
+  // colors/borders so hover effects in landing.css can take effect.
   const estilos = {
-    ...estilosVariante[variante],
+    ...(variante === 'secundario' ? {} : estilosVariante[variante] || {}),
     padding: '10px 22px',
     borderRadius: '10px',
     fontSize: '0.9rem',
