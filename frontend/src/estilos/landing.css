@@ -32,8 +32,7 @@
   font-size: 2.4rem;
 }
 .ventajas .seccion-badge {
-  font-size: 1.45rem;
-  font-weight: 900;
+  /* Eliminado para unificar estilo */
 }
 
 .sobre-nosotros-section p {
@@ -196,8 +195,7 @@
 }
 
 .caracteristicas .seccion-badge {
-  font-size: 1.45rem;
-  font-weight: 900;
+  /* Eliminado para unificar estilo */
 }
 
 .hero-titulo {
@@ -409,41 +407,32 @@
 }
 
 /* Ajustes específicos para la sección VENTAJAS */
-.ventajas .seccion-badge {
-  font-size: 1.45rem;
-  font-weight: 900;
-}
 
 .ventajas .seccion-titulo {
-  font-size: 1.9rem;
+  font-size: 1.6rem;
 }
 
 /* Ajustes específicos para la sección CARACTERÍSTICAS */
-.caracteristicas .seccion-badge {
-  font-size: 1.45rem;
-  font-weight: 900;
-}
 
 .caracteristicas .seccion-titulo {
-  font-size: 1.9rem;
+  font-size: 1.6rem;
 }
 
 .caracteristicas .seccion-subtitulo {
-  font-size: 1rem;
+  /* Eliminado para unificar subtítulos */
 }
 
 /* Ajustes específicos para la sección TESTIMONIOS */
 .testimonios .seccion-badge {
-  font-size: 1.45rem;
-  font-weight: 900;
+  /* Eliminado para unificar estilo */
 }
 
 .testimonios .seccion-titulo {
-  font-size: 1.9rem;
+  font-size: 1.6rem;
 }
 
 .testimonios .seccion-subtitulo {
-  font-size: 1rem;
+  /* Eliminado para unificar subtítulos */
 }
 
 .seccion-header {
@@ -454,15 +443,15 @@
 
 .seccion-badge {
   display: inline-block;
-  padding: 6px 18px;
-  background: transparent;
+  padding: 2px 10px;
+  background: none;
   color: var(--color-amarillo);
-  border-radius: var(--radio-completo);
-  font-size: 1.1rem;
-  font-weight: 900;
-  letter-spacing: 1.6px;
+  border-radius: 0;
+  font-size: 1.8rem;
+  font-weight: 800;
+  letter-spacing: 1px;
   text-transform: uppercase;
-  margin-bottom: 16px;
+  margin-bottom: 12px;
 }
 
 .seccion-titulo {
@@ -473,9 +462,9 @@
 }
 
 .seccion-subtitulo {
-  font-size: 1.05rem;
+  font-size: 1.1rem;
+  font-weight: 900;
   color: var(--color-texto-claro);
-  line-height: 1.6;
 }
 
 .ventajas-grid {
@@ -849,9 +838,9 @@
 }
 
 .contacto-info-titulo {
-  font-size: 1.5rem;
-  font-weight: 800;
-  color: white;
+  font-size: 1.1rem;
+  font-weight: 900;
+  color: var(--color-amarillo);
   margin-bottom: 10px;
 }
 
