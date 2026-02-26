@@ -1121,11 +1121,31 @@
 }
 
 .personas-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
   background: var(--color-fondo);
   padding: 4px 10px;
   border-radius: var(--radio-completo);
-  font-size: 0.8rem;
-  font-weight: 500;
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+
+/* Asegurar que los iconos dentro del badge se mantengan inline y no rompan el layout */
+.personas-badge img {
+  display: inline-block;
+  width: 14px;
+  height: 14px;
+  vertical-align: middle;
+}
+
+/* Inline SVG icon inside personas-badge */
+.personas-badge .icon-personas {
+  display: inline-block;
+  width: 14px;
+  height: 14px;
+  vertical-align: middle;
+  color: var(--color-azul-oscuro);
 }
 
 .tabla-mesa {
@@ -1143,13 +1163,37 @@
   gap: 6px;
 }
 
+/* Force confirm button visibility and layout inside reservas table */
+.reservas-tabla .tabla-acciones .btn-confirmar {
+  display: inline-flex !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+  background: var(--color-verde) !important;
+  color: #ffffff !important;
+  border: none !important;
+  padding: 8px 10px !important;
+  min-width: 84px !important;
+  height: 36px !important;
+  align-items: center !important;
+  justify-content: center !important;
+  border-radius: 8px !important;
+  box-shadow: 0 6px 12px rgba(16,185,129,0.18) !important;
+  z-index: 5 !important;
+}
+.reservas-tabla .tabla-acciones .btn-confirmar:hover {
+  background: #0ea46f !important;
+  transform: translateY(-1px) !important;
+}
+
 .accion-btn {
-  width: 32px;
-  height: 32px;
+  width: 36px;
+  height: 36px;
+  padding: 0;
+  box-sizing: border-box;
   border: none;
   border-radius: var(--radio-pequeno);
   cursor: pointer;
-  display: flex;
+  display: inline-flex;
   align-items: center;
   justify-content: center;
   font-size: 0.85rem;
@@ -1174,6 +1218,17 @@
   background: rgba(253, 176, 34, 0.25);
 }
 
+/* Editar (lápiz) - estilo similar a cancelar pero con borde sutil */
+.accion-editar {
+  background: rgba(255, 246, 224, 0.9);
+  color: #2b2b2b;
+  border: 1px solid rgba(0,0,0,0.04);
+}
+.accion-editar:hover{
+  background: rgba(255, 233, 184, 0.95);
+  transform: translateY(-1px);
+}
+
 .accion-eliminar {
   background: rgba(239, 68, 68, 0.1);
   color: var(--color-rojo);
@@ -1181,6 +1236,103 @@
 
 .accion-eliminar:hover {
   background: rgba(239, 68, 68, 0.2);
+}
+
+/* Make action buttons visible on white table backgrounds (override .btn--ghost) */
+.reservas-tabla .accion-btn.btn--ghost,
+.reservas-tabla .accion-btn.btn--ghost.accion-confirmar,
+.reservas-tabla .accion-btn.btn--ghost.accion-cancelar,
+.reservas-tabla .accion-btn.btn--ghost.accion-editar,
+.reservas-tabla .accion-btn.btn--ghost.accion-eliminar {
+  background: transparent !important;
+  border: 1px solid var(--color-borde);
+  color: var(--color-texto) !important;
+}
+
+/* Reinforce the modifier appearances specifically when inside the reservas table */
+.reservas-tabla .accion-confirmar {
+  /* Prominent green confirm button */
+  background: var(--color-verde) !important;
+  color: white !important;
+  border: none !important;
+  box-shadow: 0 6px 12px rgba(16,185,129,0.18);
+  transform: none;
+  z-index: 50 !important;
+  pointer-events: auto !important;
+}
+.reservas-tabla .accion-confirmar:hover {
+  background: #0ea46f !important;
+  box-shadow: 0 8px 18px rgba(16,185,129,0.22);
+  transform: translateY(-1px);
+}
+
+/* Disabled state for confirm button (visible but inactive) */
+.reservas-tabla .accion-confirmar[disabled],
+.reservas-tabla .accion-confirmar.accion-confirmar--disabled {
+  background: rgba(0, 0, 0, 0.06) !important;
+  color: var(--color-texto-claro, #8a8a8a) !important;
+  cursor: default !important;
+  opacity: 0.85 !important;
+  pointer-events: none !important;
+  box-shadow: none !important;
+}
+
+/* Make sure the SVG icon is white */
+.reservas-tabla .accion-confirmar svg { fill: currentColor; width:16px; height:16px; display:block; }
+
+/* Text confirm button used in actions */
+.tabla-acciones .btn-confirmar {
+  padding: 8px 10px;
+  border-radius: 8px;
+  min-width: 84px;
+  font-weight: 700;
+  font-size: 0.85rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+.tabla-acciones .btn-confirmar.btn--primario {
+  background: var(--color-verde) !important;
+  color: white !important;
+  box-shadow: 0 6px 12px rgba(16,185,129,0.18);
+}
+.tabla-acciones .btn-confirmar.btn--primario:hover {
+  background: #0ea46f !important;
+  transform: translateY(-1px);
+}
+
+.reservas-tabla .accion-cancelar {
+  background: rgba(253, 176, 34, 0.12);
+  color: var(--color-amarillo);
+  border: none;
+}
+.reservas-tabla .accion-cancelar:hover { background: rgba(253,176,34,0.22); }
+
+.reservas-tabla .accion-editar {
+  background: rgba(255, 246, 224, 0.95);
+  color: #2b2b2b;
+  border: none;
+}
+.reservas-tabla .accion-editar:hover { background: rgba(255,233,184,1); }
+
+.reservas-tabla .accion-eliminar {
+  background: rgba(239, 68, 68, 0.1);
+  color: var(--color-rojo);
+  border: none;
+}
+.reservas-tabla .accion-eliminar:hover { background: rgba(239,68,68,0.2); }
+
+/* Ensure SVG icons inside action buttons render consistently */
+.accion-btn svg {
+  width: 16px;
+  height: 16px;
+  display: block;
+}
+
+/* Override ghost button padding for action buttons specifically */
+.btn.accion-btn.btn--ghost,
+.btn--ghost.accion-btn {
+  padding: 0;
 }
 
 .reservas-resumen {

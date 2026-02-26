@@ -39,15 +39,22 @@ const estilosVariante = {
 const Boton = React.forwardRef(({ children, variante = 'primario', onClick, disabled = false, tipo = 'button', className = '' }, ref) => {
   // For the 'secundario' variant we prefer CSS classes to control
   // colors/borders so hover effects in landing.css can take effect.
+  const isAccion = String(className).includes('accion-btn');
   const estilos = {
     ...(variante === 'secundario' ? {} : estilosVariante[variante] || {}),
-    padding: '10px 22px',
-    borderRadius: '10px',
+    padding: isAccion ? '0' : '10px 22px',
+    width: isAccion ? '36px' : undefined,
+    height: isAccion ? '36px' : undefined,
+    borderRadius: isAccion ? '8px' : '10px',
     fontSize: '0.9rem',
     cursor: disabled ? 'not-allowed' : 'pointer',
     opacity: disabled ? 0.6 : 1,
     transition: '0.2s ease',
     fontFamily: 'inherit',
+    display: isAccion ? 'inline-flex' : undefined,
+    alignItems: isAccion ? 'center' : undefined,
+    justifyContent: isAccion ? 'center' : undefined,
+    boxSizing: isAccion ? 'border-box' : undefined,
   };
 
   // prefer CSS class .btn when available for full design control

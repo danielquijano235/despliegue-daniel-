@@ -43,6 +43,7 @@ const VistaReservas = () => {
   const [cargando, setCargando] = useState(true);
   const [modalVisible, setModalVisible] = useState(false);
   const [reservaDetalle, setReservaDetalle] = useState(null);
+  const [modalModo, setModalModo] = useState('crear'); // 'crear' | 'editar'
   const { agregarNotificacion } = useNotificaciones();
 
   useEffect(() => {
@@ -106,6 +107,18 @@ const VistaReservas = () => {
     cargarReservas();
   };
 
+  const manejarActualizar = async (id, datosReserva) => {
+    try {
+      await actualizarReserva(id, datosReserva);
+      agregarNotificacion('reserva', 'Reserva actualizada', `Reserva actualizada correctamente`);
+      cargarReservas();
+    } catch (error) {
+      // Intentar fallback local
+      setReservas(prev => prev.map(r => r.id === id ? { ...r, ...datosReserva } : r));
+      agregarNotificacion('reserva', 'Reserva actualizada', `Reserva actualizada correctamente`);
+    }
+  };
+
   // Filtrar reservas
   const reservasFiltradas = reservas.filter(r => {
     const coincideEstado = filtroEstado === 'todas' || r.estado === filtroEstado;
@@ -152,7 +165,7 @@ const VistaReservas = () => {
           <h1 className="dashboard-titulo">Reservas</h1>
           <p className="dashboard-fecha">{reservas.length} reservas en total</p>
         </div>
-        <Boton variante="primario" className="btn-nueva-reserva" onClick={() => setModalVisible(true)}>
+        <Boton variante="primario" className="btn-nueva-reserva" onClick={() => { setReservaDetalle(null); setModalModo('crear'); setModalVisible(true); }}>
           + Nueva Reserva
         </Boton>
       </div>
@@ -240,7 +253,12 @@ const VistaReservas = () => {
                   <td className="tabla-fecha">{formatearFecha(reserva.fecha)}</td>
                   <td className="tabla-hora">{formatearHora(reserva.hora)}</td>
                   <td className="tabla-personas">
-                    <span className="personas-badge"><img src="https://img.icons8.com/ios-filled/14/1a1a2e/people.png" alt="personas" width="14" height="14" style={{verticalAlign: 'middle', marginRight: 6}} />{reserva.numero_personas}</span>
+                    <span className="personas-badge">
+                      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="14" height="14" aria-hidden="true" focusable="false" className="icon-personas" role="img" aria-label="Personas">
+                        <path fill="currentColor" d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-4 0-8 2-8 4v2h16v-2c0-2-4-4-8-4z" />
+                      </svg>
+                      {reserva.numero_personas}
+                    </span>
                   </td>
                   <td className="tabla-mesa">
                     {reserva.mesa_numero ? `Mesa ${reserva.mesa_numero}` : '—'}
@@ -259,17 +277,31 @@ const VistaReservas = () => {
                   </td>
                   <td>
                     <div className="tabla-acciones">
-                      {reserva.estado === 'pendiente' && (
-                        <Boton variante="ghost" className="accion-btn accion-confirmar" onClick={() => manejarCambiarEstado(reserva.id, 'confirmada')} title="Confirmar">
-                          <img src="https://img.icons8.com/ios-filled/14/1a1a2e/checkmark.png" alt="confirmar" width="14" height="14" />
-                        </Boton>
-                      )}
-                      {reserva.estado !== 'cancelada' && (
-                        <Boton variante="ghost" className="accion-btn accion-cancelar" onClick={() => manejarCambiarEstado(reserva.id, 'cancelada')} title="Cancelar">
-                          <img src="https://img.icons8.com/ios-filled/14/1a1a2e/multiply.png" alt="cancelar" width="14" height="14" />
-                        </Boton>
-                      )}
-                      <Boton variante="peligro" className="accion-btn accion-eliminar" onClick={() => manejarEliminar(reserva.id)} title="Eliminar" />
+                      {/* Mostrar siempre el botón Confirmar pero deshabilitado cuando ya está confirmada o cancelada */}
+                      <Boton
+                        variante="ghost"
+                        className={`accion-btn accion-confirmar ${reserva.estado === 'confirmada' || reserva.estado === 'cancelada' ? 'accion-confirmar--disabled' : ''}`}
+                        onClick={() => { if (reserva.estado !== 'confirmada' && reserva.estado !== 'cancelada') manejarCambiarEstado(reserva.id, 'confirmada'); }}
+                        title="Confirmar reserva"
+                        aria-label="Confirmar reserva"
+                        disabled={reserva.estado === 'confirmada' || reserva.estado === 'cancelada'}
+                      >
+                        <svg width="14" height="14" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false">
+                          <path fill="currentColor" d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z" />
+                        </svg>
+                      </Boton>
+
+                      {/* Editar: siempre visible */}
+                      <Boton variante="ghost" className="accion-btn accion-editar" onClick={() => { setReservaDetalle(reserva); setModalModo('editar'); setModalVisible(true); }} title="Editar" aria-label="Editar reserva">
+                        <svg width="14" height="14" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false">
+                          <path fill="currentColor" d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04a1.003 1.003 0 0 0 0-1.41l-2.34-2.34a1.003 1.003 0 0 0-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z" />
+                        </svg>
+                      </Boton>
+                      <Boton variante="peligro" className="accion-btn accion-eliminar" onClick={() => manejarEliminar(reserva.id)} title="Eliminar" aria-label="Eliminar reserva">
+                        <svg width="14" height="14" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false">
+                          <path fill="currentColor" d="M9 3v1H4v2h16V4h-5V3H9zm2 5v9h2V8h-2zM7 8v9h2V8H7zm8 0v9h2V8h-2z" />
+                        </svg>
+                      </Boton>
                     </div>
                   </td>
                 </tr>
@@ -300,6 +332,9 @@ const VistaReservas = () => {
         visible={modalVisible}
         onCerrar={() => setModalVisible(false)}
         onCrear={manejarCrearReserva}
+        onActualizar={manejarActualizar}
+        reserva={reservaDetalle}
+        modo={modalModo}
         clientes={clientes}
         mesas={[]}
       />

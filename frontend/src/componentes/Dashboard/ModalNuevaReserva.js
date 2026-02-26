@@ -19,10 +19,10 @@
  *   - cargando: Indica si se está procesando la creación
  */
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Boton from '../Compartidos/Boton';
 
-const ModalNuevaReserva = ({ visible, onCerrar, onCrear, clientes = [], mesas = [] }) => {
+const ModalNuevaReserva = ({ visible, onCerrar, onCrear, onActualizar, reserva = null, modo = 'crear', clientes = [], mesas = [] }) => {
   // Estado del formulario con todos los campos
   const [formulario, setFormulario] = useState({
     cliente_id: '',
@@ -33,6 +33,29 @@ const ModalNuevaReserva = ({ visible, onCerrar, onCrear, clientes = [], mesas = 
     notas_especiales: '',
   });
   const [cargando, setCargando] = useState(false);
+
+  // Si recibimos una reserva en props, rellenar el formulario (modo edición)
+  useEffect(() => {
+    if (reserva) {
+      setFormulario({
+        cliente_id: reserva.cliente_id || reserva.cliente || '',
+        fecha: reserva.fecha || '',
+        hora: reserva.hora || '',
+        numero_personas: reserva.numero_personas || reserva.numero_personas || '',
+        mesa_id: reserva.mesa_id ?? '' ,
+        notas_especiales: reserva.notas_especiales || '',
+      });
+    } else {
+      setFormulario({
+        cliente_id: '',
+        fecha: '',
+        hora: '',
+        numero_personas: '',
+        mesa_id: '',
+        notas_especiales: '',
+      });
+    }
+  }, [reserva, visible]);
 
   // Si el modal no debe mostrarse, no renderizar nada
   if (!visible) return null;
@@ -63,24 +86,28 @@ const ModalNuevaReserva = ({ visible, onCerrar, onCrear, clientes = [], mesas = 
 
     setCargando(true);
     try {
-      // Asegurar que mesa_id se envíe como null si está vacío
       const datosReserva = { ...formulario };
       if (datosReserva.mesa_id === '' || datosReserva.mesa_id === undefined) {
         datosReserva.mesa_id = null;
       }
-      await onCrear(datosReserva);
-      // Limpiar formulario después de crear
-      setFormulario({
-        cliente_id: '',
-        fecha: '',
-        hora: '',
-        numero_personas: '',
-        mesa_id: '',
-        notas_especiales: '',
-      });
-      onCerrar(); // Cerrar el modal
+
+      if (modo === 'editar' && reserva && onActualizar) {
+        await onActualizar(reserva.id, datosReserva);
+      } else {
+        await onCrear(datosReserva);
+        setFormulario({
+          cliente_id: '',
+          fecha: '',
+          hora: '',
+          numero_personas: '',
+          mesa_id: '',
+          notas_especiales: '',
+        });
+      }
+      onCerrar();
     } catch (error) {
-      alert('Error al crear la reserva: ' + error.message);
+      const msg = error?.message || String(error);
+      alert((reserva ? 'Error al actualizar' : 'Error al crear') + ' la reserva: ' + msg);
     } finally {
       setCargando(false);
     }
@@ -98,7 +125,7 @@ const ModalNuevaReserva = ({ visible, onCerrar, onCrear, clientes = [], mesas = 
     <div className="modal-overlay" onClick={onCerrar}>
       {/* Modal (stopPropagation evita que se cierre al hacer clic dentro) */}
       <div className="modal" onClick={(e) => e.stopPropagation()}>
-        <h2 className="modal-titulo">Nueva Reserva</h2>
+        <h2 className="modal-titulo">{reserva ? 'Editar Reserva' : 'Nueva Reserva'}</h2>
 
         <form className="modal-formulario" onSubmit={manejarSubmit}>
           {/* Seleccionar cliente */}
@@ -199,7 +226,7 @@ const ModalNuevaReserva = ({ visible, onCerrar, onCrear, clientes = [], mesas = 
               Cancelar
             </Boton>
             <Boton tipo="submit" variante="primario" className="btn-crear-reserva" disabled={cargando}>
-              {cargando ? 'Creando...' : 'Crear Reserva'}
+              {cargando ? (reserva ? 'Actualizando...' : 'Procesando...') : (reserva ? 'Actualizar Reserva' : 'Crear Reserva')}
             </Boton>
           </div>
         </form>

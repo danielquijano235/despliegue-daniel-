@@ -10,11 +10,13 @@ html {
 }
 
 body {
-  font-family: var(--fuente-principal);
+  font-family: var(--fuente-principal) !important;
   color: var(--color-texto);
   background-color: var(--color-blanco);
   line-height: 1.6;
   -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
 }
 
 a {
@@ -30,6 +32,16 @@ img {
   max-width: 100%;
   height: auto;
   display: block;
+}
+
+/* Reinforce correct font-family on table and lists where names appear */
+.reservas-tabla, .reservas-tabla td, .tabla-cliente, .tabla-cliente-info, .tabla-cliente-nombre {
+  font-family: var(--fuente-principal) !important;
+}
+
+/* Avoid accidental font-family overrides from demo styles */
+.demoLanding, .demo-landing, .demo * {
+  font-family: inherit !important;
 }
 
 button {

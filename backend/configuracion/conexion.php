@@ -33,8 +33,10 @@ if (!$conexion) {
     die("Error de conexión: " . mysqli_connect_error());
 }
 
-// Configurar la codificación a UTF-8 para soportar caracteres especiales (acentos, ñ, etc.)
-mysqli_set_charset($conexion, "utf8");
+// Configurar la codificación a UTF-8 (utf8mb4) para soportar todos los caracteres
+mysqli_set_charset($conexion, "utf8mb4");
+// Asegurar también la conexión con SET NAMES en caso de capas intermedias
+mysqli_query($conexion, "SET NAMES 'utf8mb4' COLLATE 'utf8mb4_unicode_ci'");
 
 // ============================================
 // CONFIGURACIÓN DE CORS (Cross-Origin Resource Sharing)
