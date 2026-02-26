@@ -11,6 +11,7 @@
 
 import React, { useState, useEffect } from "react";
 import Boton from "../Compartidos/Boton";
+import ConfirmDialog from "../Compartidos/ConfirmDialog";
 import {
   obtenerTodasReservas,
   actualizarReserva,
@@ -198,11 +199,20 @@ const VistaReservas = () => {
     }
   };
 
-  const manejarEliminar = async (id) => {
-    if (!window.confirm("¿Estás seguro de eliminar esta reserva?")) return;
+  // ConfirmDialog para eliminar reserva
+  const [confirmOpen, setConfirmOpen] = useState(false);
+  const [confirmPayload, setConfirmPayload] = useState(null);
+
+  const manejarEliminar = (id) => {
     const reserva = reservas.find((r) => r.id === id);
-    const nombre =
-      reserva?.cliente_nombre || reserva?.cliente || "Reserva #" + id;
+    const nombre = reserva?.cliente_nombre || reserva?.cliente || "Reserva #" + id;
+    setConfirmPayload({ id, nombre });
+    setConfirmOpen(true);
+  };
+
+  const ejecutarEliminar = async () => {
+    if (!confirmPayload) return;
+    const { id, nombre } = confirmPayload;
     try {
       await eliminarReserva(id);
       agregarNotificacion(
@@ -219,6 +229,8 @@ const VistaReservas = () => {
         `La reserva de ${nombre} ha sido eliminada del sistema`,
       );
     }
+    setConfirmOpen(false);
+    setConfirmPayload(null);
   };
 
   const manejarCrearReserva = async (datosReserva) => {
@@ -539,12 +551,18 @@ const VistaReservas = () => {
                           src={
                             reserva.estado !== "confirmada" &&
                             reserva.estado !== "cancelada"
-                              ? "https://img.icons8.com/?size=100&id=7690&format=png&color=000000"
+                              ? "https://img.icons8.com/?size=100&id=11658&format=png&color=10B981"
                               : "https://img.icons8.com/ios-filled/20/10B981/checkmark.png"
                           }
                           alt="confirmar"
-                          width="20"
-                          height="20"
+                          width={
+                            reserva.estado !== "confirmada" &&
+                            reserva.estado !== "cancelada" ? 28 : 20
+                          }
+                          height={
+                            reserva.estado !== "confirmada" &&
+                            reserva.estado !== "cancelada" ? 28 : 20
+                          }
                           style={{ display: "block" }}
                         />
                       </Boton>
@@ -633,6 +651,15 @@ const VistaReservas = () => {
         modo={modalModo}
         clientes={clientes}
         mesas={[]}
+      />
+
+      {/* ConfirmDialog para eliminar reserva */}
+      <ConfirmDialog
+        abierto={confirmOpen}
+        titulo={confirmPayload ? `Eliminar reserva` : 'Eliminar'}
+        mensaje={confirmPayload ? `¿Estás seguro de eliminar la reserva de "${confirmPayload.nombre}"? Esta acción no se puede deshacer.` : '¿Estás seguro?'}
+        onConfirm={ejecutarEliminar}
+        onCancel={() => { setConfirmOpen(false); setConfirmPayload(null); }}
       />
     </div>
   );
