@@ -24,16 +24,16 @@ SET @usuario_id = LAST_INSERT_ID();
 -- Son los clientes que visitan el restaurante
 -- ============================================
 INSERT INTO clientes (usuario_id, nombre, telefono, email, visitas, ultima_visita) VALUES
-(@usuario_id, 'Carlos Rodríguez', '+57 300 1111111', 'carlos@email.com', 5, '2024-02-03'),
-(@usuario_id, 'María González', '+57 300 2222222', 'maria@email.com', 12, '2024-02-01'),
-(@usuario_id, 'Ana López', '+57 300 3333333', 'ana@email.com', 3, '2024-01-28'),
-(@usuario_id, 'Juan Pérez', '+57 300 4444444', 'juan@email.com', 8, '2024-02-02'),
-(@usuario_id, 'Laura Martínez', '+57 300 5555555', 'laura@email.com', 1, '2024-01-25'),
-(@usuario_id, 'Pedro Sánchez', '+57 300 6666666', 'pedro@email.com', 6, '2024-01-30'),
-(@usuario_id, 'Sofia Torres', '+57 300 7777777', 'sofia@email.com', 4, '2024-02-01'),
-(@usuario_id, 'Miguel Ángel', '+57 300 8888888', 'miguel@email.com', 9, '2024-02-03'),
-(@usuario_id, 'Carmen Díaz', '+57 300 9999999', 'carmen@email.com', 2, '2024-01-27'),
-(@usuario_id, 'Roberto Silva', '+57 301 1111111', 'roberto@email.com', 7, '2024-02-02');
+(@usuario_id, 'Carlos Rodríguez', '+57 300 1111111', 'carlos@email.com', 5, '2026-02-03'),
+(@usuario_id, 'María González', '+57 300 2222222', 'maria@email.com', 12, '2026-02-01'),
+(@usuario_id, 'Ana López', '+57 300 3333333', 'ana@email.com', 3, '2026-01-28'),
+(@usuario_id, 'Juan Pérez', '+57 300 4444444', 'juan@email.com', 8, '2026-02-02'),
+(@usuario_id, 'Laura Martínez', '+57 300 5555555', 'laura@email.com', 1, '2026-01-25'),
+(@usuario_id, 'Pedro Sánchez', '+57 300 6666666', 'pedro@email.com', 6, '2026-01-30'),
+(@usuario_id, 'Sofia Torres', '+57 300 7777777', 'sofia@email.com', 4, '2026-02-01'),
+(@usuario_id, 'Miguel Ángel', '+57 300 8888888', 'miguel@email.com', 9, '2026-02-03'),
+(@usuario_id, 'Carmen Díaz', '+57 300 9999999', 'carmen@email.com', 2, '2026-01-27'),
+(@usuario_id, 'Roberto Silva', '+57 301 1111111', 'roberto@email.com', 7, '2026-02-02');
 
 -- ============================================
 -- MESAS DEL RESTAURANTE

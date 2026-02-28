@@ -258,4 +258,4 @@ Si el backend no está conectado, el dashboard muestra datos estáticos de ejemp
 ## 📄 Licencia
 
 Este proyecto fue desarrollado con fines educativos.
-© 2024 BookIt. Todos los derechos reservados.
+© 2026 BookIt. Todos los derechos reservados.

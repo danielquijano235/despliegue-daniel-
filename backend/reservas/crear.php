@@ -12,7 +12,7 @@ error_reporting(E_ALL);
  * Recibe: POST con JSON {
  *   "cliente_id": 1,
  *   "numero_personas": 4,
- *   "fecha": "2024-02-04",
+ *   "fecha": "2026-02-04",
  *   "hora": "19:00",
  *   "mesa_id": 3,           (opcional)
  *   "notas_especiales": ""   (opcional)

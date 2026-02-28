@@ -58,7 +58,7 @@ const PiePagina = () => {
 
       {/* Copyright */}
       <p className="footer-copyright">
-        © 2024 BookIt. Todos los derechos reservados.
+        © 2026 BookIt. Todos los derechos reservados.
       </p>
     </footer>
   );

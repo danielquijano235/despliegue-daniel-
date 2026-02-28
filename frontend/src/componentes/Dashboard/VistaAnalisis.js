@@ -59,9 +59,11 @@ const VistaAnalisis = ({ metricas, datosGrafica }) => {
   // FUNCIONES AUXILIARES
   // ============================================
   const formatearMoneda = (valor) => {
-    return new Intl.NumberFormat("es-ES", {
-      style: "currency",
-      currency: "EUR",
+    return new Intl.NumberFormat('es-CO', {
+      style: 'currency',
+      currency: 'COP',
+      minimumFractionDigits: 0,
+      maximumFractionDigits: 0,
     }).format(valor);
   };
 
