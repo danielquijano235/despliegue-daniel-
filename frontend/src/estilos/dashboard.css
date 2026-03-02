@@ -248,6 +248,52 @@
   background: var(--color-blanco);
 }
 
+/* Live search dropdown under the top bar */
+.search-dropdown {
+  position: absolute;
+  top: calc(100% + 10px);
+  left: 0;
+  width: 100%;
+  max-height: 320px;
+  overflow: auto;
+  background: var(--color-blanco);
+  border: 1px solid var(--color-borde);
+  box-shadow: 0 12px 40px rgba(12, 18, 31, 0.12);
+  border-radius: 12px;
+  z-index: 1200;
+  padding: 10px;
+}
+
+.search-dropdown-section {
+  padding: 6px 4px;
+  border-bottom: 1px dashed rgba(0,0,0,0.04);
+}
+.search-dropdown-section:last-child { border-bottom: none; }
+
+.search-dropdown-title {
+  font-size: 0.78rem;
+  color: var(--color-texto-claro);
+  font-weight: 700;
+  margin: 6px 8px;
+}
+
+.search-item {
+  display: block;
+  width: 100%;
+  text-align: left;
+  padding: 8px 10px;
+  background: transparent;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+}
+.search-item:hover { background: rgba(253,176,34,0.06); }
+.search-item-main { font-weight: 600; color: var(--color-texto); }
+.search-item-sub { font-size: 0.8rem; color: var(--color-texto-claro); margin-top: 2px; }
+
+.search-empty { padding: 8px 10px; color: var(--color-texto-claro); }
+
+
 /* ====== BOTONES UNIFICADOS (COMPONENTE Boton / clases .btn) ====== */
 .btn {
   padding: 10px 18px;
@@ -312,6 +358,13 @@
 .btn--sm {
   padding: 6px 10px;
   font-size: 0.85rem;
+}
+
+/* Highlight for search matches */
+.search-highlight {
+  background: rgba(253,176,34,0.25);
+  padding: 0 2px;
+  border-radius: 3px;
 }
 
 .barra-acciones {

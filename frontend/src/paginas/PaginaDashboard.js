@@ -38,6 +38,7 @@ const PaginaDashboard = () => {
   const [modalVisible, setModalVisible] = useState(false);
   const [cargando, setCargando] = useState(true);
   const [seccionActiva, setSeccionActiva] = useState("inicio");
+  const [busquedaGlobal, setBusquedaGlobal] = useState("");
 
   const navigate = useNavigate();
   const { agregarNotificacion } = useNotificaciones();
@@ -230,7 +231,21 @@ const PaginaDashboard = () => {
       {/* ====== CONTENIDO PRINCIPAL ====== */}
       <div className="dashboard-contenido">
         {/* Barra superior con búsqueda y nueva reserva */}
-        <BarraSuperior onNuevaReserva={() => setModalVisible(true)} />
+        <BarraSuperior
+          onNuevaReserva={() => setModalVisible(true)}
+          onBuscar={(q) => setBusquedaGlobal(q)}
+          onSeleccionarResultado={(type, item) => {
+            if (type === 'cliente') {
+              setSeccionActiva('clientes');
+              setBusquedaGlobal(item.nombre || item.cliente || '');
+            } else if (type === 'reserva') {
+              setSeccionActiva('reservas');
+              setBusquedaGlobal(item.cliente_nombre || item.cliente || '');
+            }
+          }}
+          clientes={clientes}
+          reservas={reservas}
+        />
 
         {/* Cuerpo del dashboard */}
         <main className="dashboard-cuerpo">
@@ -288,9 +303,9 @@ const PaginaDashboard = () => {
             </>
           )}
 
-          {seccionActiva === "reservas" && <VistaReservas />}
+          {seccionActiva === "reservas" && <VistaReservas busquedaGlobal={busquedaGlobal} />}
 
-          {seccionActiva === "clientes" && <VistaClientes />}
+          {seccionActiva === "clientes" && <VistaClientes busquedaGlobal={busquedaGlobal} />}
 
           {seccionActiva === "mesas" && <VistaMesas />}
 

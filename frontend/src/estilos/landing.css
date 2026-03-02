@@ -46,7 +46,7 @@
 }
 .caracteristicas-imagen img.activa {
   box-shadow:
-    0 8px 32px 0 rgba(16, 185, 129, 0.25),
+    0 8px 32px 0 rgba(30,58,95,0.42),
     var(--sombra-grande);
   transform: scale(1.05);
   z-index: 2;
@@ -59,11 +59,19 @@
   display: block;
   margin: 0 auto;
   border-radius: var(--radio-grande);
-  box-shadow: var(--sombra-grande);
+  /* sombra azulada detrás de la imagen para más coherencia con la marca */
+  box-shadow: 0 18px 50px rgba(30,58,95,0.28); /* rgba de --color-azul-oscuro */
   transition:
     box-shadow 0.3s,
     transform 0.3s;
 }
+
+.caracteristicas-imagen img:hover {
+  transform: translateY(-6px) scale(1.02);
+  box-shadow: 0 28px 70px rgba(30,58,95,0.42);
+}
+
+/* (Revertido) mejoras visuales temporales para las imágenes de características */
 
 .navbar {
   position: fixed;
@@ -367,6 +375,22 @@
   display: flex;
   align-items: center;
   gap: 16px;
+}
+
+/* Ajustes para la tarjeta flotante con mensaje corto */
+.hero-tarjeta-mensaje {
+  margin: 0;
+  font-size: 0.95rem; /* similar al h4/numero del diseño original */
+  font-weight: 700;
+  color: var(--color-texto);
+  max-width: 180px; /* evita que el texto sea muy largo */
+  line-height: 1.2;
+  white-space: normal;
+}
+
+.hero-bookit {
+  color: var(--color-amarillo);
+  font-weight: 800;
 }
 
 @keyframes flotar {
@@ -689,14 +713,16 @@
 }
 
 .caracteristicas-imagen {
-  flex: 0 0 40%;
+  flex: 0 0 45%; /* un poco menos ancho para equilibrar con el texto */
   position: relative;
+  /* desplazar ligeramente a la izquierda para más protagonismo visual */
+  margin-left: -20px;
 }
 
 .caracteristicas-imagen img {
   width: 100%;
-  max-width: 350px;
-  height: 220px;
+  max-width: 420px; /* reducido para no resultar excesiva */
+  height: 280px;
   object-fit: cover;
   display: block;
   margin: 0 auto;
@@ -705,6 +731,45 @@
   transition:
     box-shadow 0.3s,
     transform 0.3s;
+}
+
+/* Responsive adjustments: mantener protagonismo sin romper layout */
+@media (max-width: 900px) {
+  .caracteristicas-contenido {
+    gap: 36px;
+  }
+  .caracteristicas-imagen {
+    flex: 0 0 44%;
+    margin-left: 0; /* restaurar en tablet */
+  }
+  .caracteristicas-imagen img {
+    max-width: 380px;
+    height: 240px;
+  }
+}
+
+@media (max-width: 600px) {
+  .caracteristicas-contenido {
+    flex-direction: column-reverse; /* texto arriba, imagen abajo */
+    gap: 20px;
+  }
+  .caracteristicas-imagen {
+    flex: 0 0 100%;
+    width: 100%;
+    margin-left: 0; /* asegurar 0 en móvil */
+  }
+  .caracteristicas-imagen img {
+    width: 100%;
+    max-width: 100%;
+    height: auto;
+  }
+}
+
+/* Ajuste extra en pantallas muy grandes para desplazar un poco más */
+@media (min-width: 1300px) {
+  .caracteristicas-imagen {
+    margin-left: -36px;
+  }
 }
 
 /* ====== SECCIÓN TESTIMONIOS ====== */
@@ -1110,8 +1175,9 @@
 
 .footer-contenido {
   display: grid;
-  /* dar más espacio a la columna de contacto (3ª columna) */
-  grid-template-columns: 2fr 1fr 1.4fr 1fr;
+    /* Tres columnas centradas: logo (más ancho), producto y empresa */
+    grid-template-columns: minmax(260px, 420px) minmax(160px, 260px) minmax(200px, 320px);
+    justify-content: center; /* centrar el conjunto de columnas dentro del contenedor */
   gap: 40px;
   max-width: 1200px;
   margin: 0 auto;
@@ -1156,6 +1222,146 @@
 
 .footer-links a:hover {
   color: var(--color-amarillo);
+}
+
+/* Botones que actúan como enlaces en el footer */
+.footer-links .link-button {
+  font-size: 0.85rem;
+  color: rgba(255,255,255,0.6);
+  background: transparent;
+  border: none;
+  padding: 0;
+  margin: 0;
+  text-align: left;
+  cursor: pointer;
+  transition: var(--transicion-rapida);
+}
+.footer-links .link-button:hover {
+  color: var(--color-amarillo);
+}
+
+/* CTA específico para el modal "Sobre Nosotros" */
+.about-cta {
+  display: inline-block;
+  background-color: var(--color-azul-oscuro);
+  color: #ffffff;
+  padding: 8px 14px;
+  border-radius: 10px;
+  text-decoration: none;
+  font-weight: 700;
+  transition: transform 0.18s ease, box-shadow 0.18s ease, background-color 0.18s ease;
+}
+.about-cta:hover {
+  transform: translateY(-3px);
+  background-color: var(--color-amarillo);
+  color: var(--color-azul-oscuro);
+  box-shadow: 0 10px 30px rgba(30,58,95,0.12);
+}
+
+/* About modal header with blue background and centered logo */
+.about-modal {
+  display: block;
+}
+.about-modal-header {
+  background: linear-gradient(180deg, var(--color-azul-oscuro), var(--color-azul-oscuro));
+  padding: 18px 12px;
+  border-radius: 10px 10px 0 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: -20px -20px 12px -20px; /* pull to modal edges (ModalSimple has padding) */
+  position: relative;
+}
+.about-modal-logo {
+  width: 72px;
+  height: 72px;
+  object-fit: contain;
+  border-radius: 8px;
+  background: transparent; /* quitar el recuadro blanco */
+  padding: 0;
+}
+.about-modal-close {
+  position: absolute;
+  top: 8px;
+  right: 12px;
+  border: none;
+  background: transparent;
+  color: #fff;
+  font-size: 26px; /* slightly larger X */
+  line-height: 1;
+  padding: 6px; /* larger hit area */
+  cursor: pointer;
+}
+
+/* Animations for about modal header and logo */
+@keyframes about-header-in {
+  0% { transform: translateY(-10px); opacity: 0; }
+  60% { transform: translateY(4px); opacity: 1; }
+  100% { transform: translateY(0); opacity: 1; }
+}
+
+@keyframes logo-pop {
+  0% { transform: scale(0.8); opacity: 0; }
+  60% { transform: scale(1.06); opacity: 1; }
+  100% { transform: scale(1); opacity: 1; }
+}
+
+.about-modal-header {
+  position: relative;
+  animation: about-header-in 360ms cubic-bezier(.2,.9,.2,1) both;
+}
+
+.about-modal-logo {
+  width: 88px; /* aumentado para más presencia */
+  height: 88px;
+  object-fit: contain;
+  border-radius: 8px;
+  background: transparent;
+  padding: 0;
+  animation: logo-pop 420ms cubic-bezier(.2,.9,.2,1) 80ms both;
+}
+.about-modal-body {
+  /* body padding kept; animation removed to revert demo animations */
+  padding: 6px 2px 0 2px;
+}
+.about-modal-body {
+  padding: 6px 2px 0 2px;
+}
+
+.about-modal-title {
+  color: #000; /* explicit black title */
+  margin: 0 0 8px;
+}
+
+.about-modal {
+  display: block;
+  width: 100%;
+}
+
+.about-modal-text {
+  margin: 0 0 12px 0;
+  color: var(--color-texto-claro);
+  line-height: 1.6;
+  text-align: left;
+}
+
+.about-modal-list {
+  margin-top: 12px;
+  padding-left: 20px;
+  color: var(--color-texto);
+}
+
+.about-modal-actions {
+  margin-top: 14px;
+  display: flex;
+  gap: 12px;
+  align-items: center;
+}
+
+.about-demo-link {
+  color: var(--color-amarillo);
+  text-decoration: none;
+  font-weight: 700;
 }
 
 /* Contact column styles */

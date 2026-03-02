@@ -47,7 +47,7 @@ const BarraNavegacion = () => {
 
       {/* Links de navegación (solo se ven en escritorio) */}
       <div className={`navbar-links ${menuAbierto ? 'abierto' : ''}`}>
-        <a href="#ventajas" onClick={() => setMenuAbierto(false)}>Beneficios</a>
+        <a href="#ventajas" onClick={() => setMenuAbierto(false)}>Ventajas</a>
         <a href="#caracteristicas" onClick={() => setMenuAbierto(false)}>Características</a>
         <a href="#testimonios" onClick={() => setMenuAbierto(false)}>Testimonios</a>
         <a href="#contacto" onClick={() => setMenuAbierto(false)}>Contacto</a>

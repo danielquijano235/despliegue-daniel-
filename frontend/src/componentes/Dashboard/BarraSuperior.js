@@ -69,10 +69,13 @@ const obtenerColorFondo = (tipo) => {
   return colores[tipo] || colores.info;
 };
 
-const BarraSuperior = ({ onNuevaReserva }) => {
+const BarraSuperior = ({ onNuevaReserva, onBuscar, onSeleccionarResultado, clientes = [], reservas = [] }) => {
   const [panelAbierto, setPanelAbierto] = useState(false);
   const panelRef = useRef(null);
   const botonRef = useRef(null);
+  const [query, setQuery] = useState('');
+  const [dropdownOpen, setDropdownOpen] = useState(false);
+  const dropdownRef = useRef(null);
 
   const {
     notificaciones,
@@ -83,7 +86,7 @@ const BarraSuperior = ({ onNuevaReserva }) => {
     limpiarTodas,
   } = useNotificaciones();
 
-  // Cerrar el panel al hacer clic fuera
+  // Cerrar el panel o dropdown al hacer clic fuera
   useEffect(() => {
     const manejarClickFuera = (e) => {
       if (
@@ -92,13 +95,33 @@ const BarraSuperior = ({ onNuevaReserva }) => {
       ) {
         setPanelAbierto(false);
       }
+      if (dropdownRef.current && !dropdownRef.current.contains(e.target) && !e.target.closest('.barra-busqueda')) {
+        setDropdownOpen(false);
+      }
     };
 
-    if (panelAbierto) {
+    if (panelAbierto || dropdownOpen) {
       document.addEventListener('mousedown', manejarClickFuera);
     }
     return () => document.removeEventListener('mousedown', manejarClickFuera);
-  }, [panelAbierto]);
+  }, [panelAbierto, dropdownOpen]);
+
+  // Abrir/cerrar dropdown según query
+  useEffect(() => {
+    setDropdownOpen(Boolean(query && query.trim().length > 0));
+  }, [query]);
+
+  // Helper para resaltar coincidencias
+  const escapeRegExp = (s) => String(s).replace(/[.*+?^${}()|[\\]\\]/g, '\\$&');
+  const highlight = (text = '', q = '') => {
+    if (!q) return text;
+    const qTrim = q.trim();
+    if (!qTrim) return text;
+    const parts = String(text).split(new RegExp(`(${escapeRegExp(qTrim)})`, 'i'));
+    return parts.map((p, i) =>
+      p.toLowerCase() === qTrim.toLowerCase() ? <mark key={i} className="search-highlight">{p}</mark> : <span key={i}>{p}</span>
+    );
+  };
 
   return (
     <header className="barra-superior">
@@ -110,7 +133,85 @@ const BarraSuperior = ({ onNuevaReserva }) => {
             <line x1="14.4142" y1="14" x2="18" y2="17.5858" stroke="#FDB022" strokeWidth="2" strokeLinecap="round" />
           </svg>
         </span>
-        <input type="text" placeholder="Buscar clientes, reservas..." />
+        <input
+          type="text"
+          placeholder="Buscar clientes, reservas..."
+          value={query}
+          onChange={(e) => {
+            const v = e.target.value;
+            setQuery(v);
+            // Nota: no llamamos a onBuscar en cada pulsación para evitar
+            // que la vista de Clientes/Reservas se actualice en vivo.
+            // onBuscar se llama al presionar Enter o al seleccionar un resultado.
+          }}
+          onKeyDown={(e) => {
+            if (e.key === 'Enter' && typeof onBuscar === 'function') {
+              onBuscar(query);
+            }
+          }}
+          aria-haspopup="listbox"
+          aria-expanded={dropdownOpen}
+        />
+        {/* Live dropdown */}
+        {dropdownOpen && (
+          <div className="search-dropdown" ref={dropdownRef} role="listbox">
+            <div className="search-dropdown-section">
+              <div className="search-dropdown-title">Clientes</div>
+              {clientes && clientes.length > 0 ? (
+                <>
+                  {clientes
+                    .filter(c => {
+                      if (!query) return false;
+                      const q = query.toLowerCase();
+                      return (c.nombre || '').toLowerCase().includes(q) || (c.telefono || '').includes(q) || (c.email || '').toLowerCase().includes(q);
+                    })
+                    .slice(0,6)
+                    .map((c) => (
+                      <button key={c.id || c.nombre} className="search-item" onClick={() => {
+                        setQuery(c.nombre || '');
+                        if (typeof onBuscar === 'function') onBuscar(c.nombre || '');
+                        if (typeof onSeleccionarResultado === 'function') onSeleccionarResultado('cliente', c);
+                        setDropdownOpen(false);
+                      }}>
+                        <div className="search-item-main">{highlight(c.nombre || '-', query)}</div>
+                        <div className="search-item-sub">{highlight(c.telefono || '', query)}{c.email ? ' • ' : ''}{highlight(c.email || '', query)}</div>
+                      </button>
+                    ))}
+                </>
+              ) : (
+                <div className="search-empty">No hay clientes</div>
+              )}
+            </div>
+
+            <div className="search-dropdown-section">
+              <div className="search-dropdown-title">Reservas</div>
+              {reservas && reservas.length > 0 ? (
+                <>
+                  {reservas
+                    .filter(r => {
+                      if (!query) return false;
+                      const q = query.toLowerCase();
+                      return (r.cliente_nombre || r.cliente || '').toLowerCase().includes(q) || (r.cliente_telefono || '').includes(q) || (r.fecha || '').includes(q);
+                    })
+                    .slice(0,6)
+                    .map((r) => (
+                      <button key={r.id || (r.cliente_nombre + r.fecha)} className="search-item" onClick={() => {
+                        setQuery(r.cliente_nombre || r.cliente || '');
+                        if (typeof onBuscar === 'function') onBuscar(r.cliente_nombre || r.cliente || '');
+                        if (typeof onSeleccionarResultado === 'function') onSeleccionarResultado('reserva', r);
+                        setDropdownOpen(false);
+                      }}>
+                        <div className="search-item-main">{highlight(r.cliente_nombre || r.cliente, query)}</div>
+                        <div className="search-item-sub">{r.fecha} • {r.hora ? r.hora.substring(0,5) : ''}</div>
+                      </button>
+                    ))}
+                </>
+              ) : (
+                <div className="search-empty">No hay reservas</div>
+              )}
+            </div>
+          </div>
+        )}
       </div>
 
       {/* Acciones de la barra */}

@@ -127,7 +127,7 @@ const coloresAvatar = [
   "#F97316",
 ];
 
-const VistaClientes = () => {
+const VistaClientes = ({ busquedaGlobal }) => {
   const [clientes, setClientes] = useState([]);
   const [busqueda, setBusqueda] = useState("");
   const [cargando, setCargando] = useState(true);
@@ -144,6 +144,11 @@ const VistaClientes = () => {
   useEffect(() => {
     cargarClientes();
   }, []);
+
+  // Si llega una búsqueda global desde la barra superior, sincronizarla
+  useEffect(() => {
+    if (typeof busquedaGlobal === 'string') setBusqueda(busquedaGlobal);
+  }, [busquedaGlobal]);
 
   const cargarClientes = async () => {
     setCargando(true);
@@ -237,6 +242,27 @@ const VistaClientes = () => {
 
   const obtenerInicial = (nombre) => {
     return nombre ? nombre[0].toUpperCase() : "?";
+  };
+
+  // Helper: resaltar coincidencias en texto
+  const escapeRegExp = (s) => s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+  const highlight = (text = '', q = '') => {
+    if (!q) return text;
+    const qTrim = q.trim();
+    if (!qTrim) return text;
+    try {
+      const re = new RegExp(`(${escapeRegExp(qTrim)})`, 'i');
+      const parts = String(text).split(new RegExp(`(${escapeRegExp(qTrim)})`, 'i'));
+      return parts.map((part, i) =>
+        part && re.test(part) && part.toLowerCase() === qTrim.toLowerCase() ? (
+          <mark key={i} className="search-highlight">{part}</mark>
+        ) : (
+          <span key={i}>{part}</span>
+        )
+      );
+    } catch (err) {
+      return text;
+    }
   };
 
   // Estadísticas rápidas
@@ -423,12 +449,12 @@ const VistaClientes = () => {
                         {obtenerInicial(cliente.nombre)}
                       </div>
                       <span className="tabla-cliente-nombre">
-                        {cliente.nombre}
+                        {highlight(cliente.nombre, busqueda)}
                       </span>
                     </div>
                   </td>
-                  <td className="tabla-fecha">{cliente.telefono || "—"}</td>
-                  <td className="tabla-fecha">{cliente.email || "—"}</td>
+                  <td className="tabla-fecha">{cliente.telefono ? highlight(cliente.telefono, busqueda) : "—"}</td>
+                  <td className="tabla-fecha">{cliente.email ? highlight(cliente.email, busqueda) : "—"}</td>
                   <td>
                     <span
                       className={`visitas-badge ${Number(cliente.visitas) >= 10 ? "visitas-vip" : ""}`}
@@ -445,8 +471,8 @@ const VistaClientes = () => {
                         className="notas-badge"
                         title={cliente.preferencias}
                       >
-                        {cliente.preferencias.substring(0, 25)}
-                        {cliente.preferencias.length > 25 ? "..." : ""}
+                          {highlight(cliente.preferencias.substring(0, 25), busqueda)}
+                          {cliente.preferencias.length > 25 ? "..." : ""}
                       </span>
                     ) : (
                       "—"

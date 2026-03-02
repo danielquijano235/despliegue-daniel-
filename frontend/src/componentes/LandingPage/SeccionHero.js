@@ -94,13 +94,9 @@ const SeccionHero = () => {
             alt="Restaurante moderno"
           />
 
-          {/* Tarjeta flotante con estadística */}
+          {/* Tarjeta flotante: mensaje promocional */}
           <div className="hero-tarjeta-flotante">
-            <div className="hero-tarjeta-info">
-              <h4>Reservas hoy</h4>
-              <span className="numero">127</span>
-            </div>
-            <span className="hero-tarjeta-badge">↑ +23%</span>
+            <p className="hero-tarjeta-mensaje">Mejora tu resturante con <span className="hero-bookit">Bookit</span> y resive mas clientes</p>
           </div>
         </div>
       </div>
