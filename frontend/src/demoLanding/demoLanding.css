@@ -589,6 +589,15 @@
   overflow-x: hidden; /* prevent horizontal scrollbar */
   box-sizing: border-box;
 }
+
+/* Category modal list styling used by PaginaMenu */
+.categoria-list { padding: 6px 4px 8px; }
+.categoria-item { padding: 10px 6px; }
+.categoria-row { display:flex; justify-content: space-between; align-items: baseline; }
+.categoria-nombre { font-weight: 700; color: var(--color-azul-oscuro); font-size: 1rem; }
+.categoria-precio { font-weight: 700; color: #333; }
+.categoria-desc { color: #555; margin: 8px 0 8px 0; }
+.categoria-sep { height: 3px; background: var(--color-amarillo); margin-top: 6px; border-radius: 2px; }
 .demo-reservar-inner { max-width: 1200px; margin: 0 auto; box-sizing: border-box; padding: 0 12px; }
 .reservas-title {
   font-family: 'Georgia', serif;
