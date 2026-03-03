@@ -2,72 +2,46 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 
-const sections = [
-  { id: 'bebidas', title: 'Bebidas' },
-  { id: 'desayunos', title: 'Desayunos' },
-  { id: 'cenas', title: 'Cenas' },
-  { id: 'carnes', title: 'Carnes' },
+const categories = [
+  { id: 'para-empezar', title: 'PARA EMPEZAR', image: '/assets/images/para-empezar.jpg' },
+  { id: 'sopas', title: 'SOPAS', image: '/assets/images/sopas.jpg' },
+  { id: 'carnes', title: 'CARNES', image: '/assets/images/carnes.jpg' },
+  { id: 'parrilla', title: 'PARRILLA', image: '/assets/images/parrilla.jpg' },
+  { id: 'especiales', title: 'ESPECIALES', image: '/assets/images/especiales.jpg' },
+  { id: 'ensaladas', title: 'ENSALADAS', image: '/assets/images/ensaladas.jpg' },
+  { id: 'hamburguesas', title: 'HAMBURGUESAS', image: '/assets/images/hamburguesas.jpg' },
+  { id: 'infantil', title: 'INFANTIL', image: '/assets/images/infantil.jpg' },
+  { id: 'cafes', title: 'CAFÉS', image: '/assets/images/cafes.jpg' },
+  { id: 'jugos', title: 'JUGOS', image: '/assets/images/jugos.jpg' },
+  { id: 'bebidas', title: 'BEBIDAS', image: '/assets/images/bebidas.jpg' },
+  { id: 'licores', title: 'LICORES', image: '/assets/images/licores.jpg' },
 ];
 
 const PaginaMenu = () => {
   return (
-    <main
-      className="pagina-menu"
-      style={{
-        background: 'var(--color-azul-oscuro)',
-        color: '#fff',
-        padding: '20px',
-        width: '100%',
-        minHeight: '100vh',
-        position: 'relative',
-        left: '50%',
-        marginLeft: '-50vw',
-        boxSizing: 'border-box',
-      }}
-    >
-      <div style={{ maxWidth: 900, margin: '0 auto', textAlign: 'center', minHeight: '100vh', display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center' }}>
-        <h1 className="pagina-menu-title" style={{ margin: '0 0 8px' }}>Menú</h1>
-        <p className="pagina-menu-subtitle" style={{ margin: '0 0 58px', opacity: 0.95 }}>Nuestras categorías destacadas</p>
+    <main className="vista-menu menu-landing">
+      <div className="menu-header" style={{ background: 'transparent', boxShadow: 'none', padding: 0 }}>
+        <div className="menu-titulo" style={{ width: '100%', textAlign: 'center' }}>
+          <h1>Nuestro Menú</h1>
+        </div>
+      </div>
 
-        {/* Top list of links (vertical, centered) */}
-        <div
-          className="pagina-menu-links"
-          style={{
-            display: 'flex',
-            flexDirection: 'column',
-            alignItems: 'center',
-            gap: '16px',
-            marginBottom: 32,
-            width: '100%',
-            maxWidth: 420,
-          }}
-        >
-          {sections.map((s) => (
-            <Link
-              key={s.id}
-              to={`/menu/${s.id}`}
-              className="pagina-menu-link-vertical"
-              style={{
-                display: 'block',
-                padding: '16px 20px',
-                borderRadius: 10,
-                background: 'rgba(255,255,255,0.06)',
-                width: '100%',
-                boxSizing: 'border-box',
-                textDecoration: 'none',
-                color: 'inherit',
-                textAlign: 'center',
-                fontWeight: 600,
-                fontSize: '1.1rem',
-              }}
-            >
-              {s.title}
-            </Link>
+      <section className="menu-grid-container">
+        <div className="menu-grid">
+          {categories.map((c) => (
+            <article className="menu-card" key={c.id}>
+              <Link to={`/menu/${c.id}`} className="menu-card-link">
+                <div className="menu-card-img">
+                  <img src={c.image} alt={c.title} />
+                </div>
+                <div style={{ textAlign: 'center' }}>
+                  <span className="menu-card-btn">{c.title}</span>
+                </div>
+              </Link>
+            </article>
           ))}
         </div>
-
-        {/* Detailed sections removed — page shows only links per request */}
-      </div>
+      </section>
     </main>
   );
 };
