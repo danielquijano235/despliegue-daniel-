@@ -153,10 +153,16 @@ const VistaReservas = () => {
     setCargando(true);
     try {
       const datos = await obtenerTodasReservas();
-      setReservas(datos);
+      // Merge backend reservas with any demo reservations stored locally (for unauthenticated demo flow)
+      const demo = JSON.parse(localStorage.getItem('demo_reservas') || '[]');
+      // backend returns array of reservas; keep demo ones first for visibility
+      const todos = demo.concat(Array.isArray(datos) ? datos : []);
+      setReservas(todos);
     } catch (error) {
       console.error("Error al cargar reservas:", error);
-      setReservas(reservasEjemplo);
+      // On error, still include demo reservations if any
+      const demo = JSON.parse(localStorage.getItem('demo_reservas') || '[]');
+      setReservas(demo.length ? demo : reservasEjemplo);
     } finally {
       setCargando(false);
     }

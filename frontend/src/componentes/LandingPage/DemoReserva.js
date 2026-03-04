@@ -14,6 +14,7 @@
 
 import React, { useState, useEffect } from 'react';
 import Boton from '../Compartidos/Boton';
+import { verificarSesion, crearCliente, crearReserva } from '../../servicios/api';
 
 // ============================================
 // DATOS DE CONFIGURACIÓN
@@ -39,7 +40,7 @@ const obtenerDiasMes = (anio, mes) => {
   return dias;
 };
 
-const DemoReserva = ({ visible, onCerrar, selectedEvent }) => {
+const DemoReserva = ({ visible, onCerrar, selectedEvent, demoOnly = false }) => {
   // ============================================
   // ESTADOS
   // ============================================
@@ -52,6 +53,7 @@ const DemoReserva = ({ visible, onCerrar, selectedEvent }) => {
   const [animando, setAnimando] = useState(false);
   const [confirmado, setConfirmado] = useState(false);
   const [nombreDemo, setNombreDemo] = useState('');
+  const [telefonoDemo, setTelefonoDemo] = useState('');
 
   const hoy = new Date();
   const diasMes = obtenerDiasMes(anioActual, mesActual);
@@ -67,6 +69,7 @@ const DemoReserva = ({ visible, onCerrar, selectedEvent }) => {
       setHoraSeleccionada(null);
       setConfirmado(false);
       setNombreDemo('');
+      setTelefonoDemo('');
       setAnimando(false);
     }
   }, [visible]);
@@ -132,11 +135,85 @@ const DemoReserva = ({ visible, onCerrar, selectedEvent }) => {
 
   // Confirmar reserva demo
   const confirmarReserva = () => {
-    setAnimando(true);
-    setTimeout(() => {
-      setConfirmado(true);
-      setAnimando(false);
-    }, 400);
+    // Enviar reserva: si hay sesión, crear en backend; si no, guardar localmente (demo)
+    const enviar = async () => {
+      setAnimando(true);
+      try {
+        const notaEvento = selectedEvent ? `Evento: ${selectedEvent.title}` : '';
+
+        // If this modal is demo-only (hero), always store locally and do not send to backend
+        if (demoOnly) {
+          const almacen = JSON.parse(localStorage.getItem('demo_reservas') || '[]');
+          const fechaISO = diaSeleccionado ? `${anioActual}-${String(mesActual+1).padStart(2,'0')}-${String(diaSeleccionado).padStart(2,'0')}` : '';
+          const parseHora = (h) => {
+            if (!h) return '';
+            const m = h.match(/(\d{1,2}):(\d{2})\s*(am|pm)?/i);
+            if (!m) return h;
+            let hh = parseInt(m[1],10);
+            const mm = m[2];
+            const ampm = (m[3] || '').toLowerCase();
+            if (ampm === 'pm' && hh < 12) hh += 12;
+            if (ampm === 'am' && hh === 12) hh = 0;
+            return `${String(hh).padStart(2,'0')}:${mm}:00`;
+          };
+          const hora24 = parseHora(horaSeleccionada);
+          const demo = {
+            id: `demo-${Date.now()}`,
+            cliente_nombre: nombreDemo || 'Cliente Demo',
+            cliente_telefono: telefonoDemo || '',
+            cliente_email: '',
+            numero_personas: personas,
+            fecha: fechaISO,
+            hora: hora24,
+            estado: 'pendiente',
+            mesa_numero: null,
+            notas_especiales: notaEvento
+          };
+          almacen.unshift(demo);
+          localStorage.setItem('demo_reservas', JSON.stringify(almacen));
+        } else {
+          const sesion = await verificarSesion().catch(() => null);
+          if (sesion && sesion.autenticado) {
+          // Crear cliente si hay nombre
+          let cliente_id = null;
+          if (nombreDemo && nombreDemo.trim()) {
+            try {
+              const respCliente = await crearCliente({ nombre: nombreDemo.trim(), telefono: telefonoDemo.trim(), email: '' });
+              // respCliente may return { cliente: { id: ... } } or { id }
+              cliente_id = respCliente?.cliente?.id || respCliente?.id || null;
+            } catch (e) {
+              console.warn('No se pudo crear cliente demo:', e);
+            }
+          }
+
+          const fechaISO = diaSeleccionado ? `${anioActual}-${String(mesActual+1).padStart(2,'0')}-${String(diaSeleccionado).padStart(2,'0')}` : '';
+          const hora24 = horaSeleccionada && horaSeleccionada.includes(':') ? (horaSeleccionada.length === 8 ? horaSeleccionada : horaSeleccionada + ':00') : '';
+
+          const datosReserva = {
+            cliente_id: cliente_id,
+            numero_personas: personas,
+            fecha: fechaISO,
+            hora: hora24,
+            mesa_id: null,
+            notas_especiales: notaEvento
+          };
+
+          await crearReserva(datosReserva);
+          }
+        }
+
+        // Mostrar confirmación
+        setTimeout(() => {
+          setConfirmado(true);
+          setAnimando(false);
+        }, 300);
+      } catch (err) {
+        console.error('Error al enviar reserva demo:', err);
+        setAnimando(false);
+        setConfirmado(true);
+      }
+    };
+    enviar();
   };
 
   // Simular horarios "ocupados" aleatoriamente (para realismo)
@@ -375,13 +452,28 @@ const DemoReserva = ({ visible, onCerrar, selectedEvent }) => {
               <div className="demo-campo-nombre">
                 <label>
                   <img src="https://img.icons8.com/ios-filled/14/999999/user.png" alt="" width="14" height="14" />
-                  Tu nombre (opcional)
+                  Tu nombre *
                 </label>
                 <input
                   type="text"
                   placeholder="Ej: Carlos García"
                   value={nombreDemo}
                   onChange={(e) => setNombreDemo(e.target.value)}
+                  required
+                />
+              </div>
+
+              <div className="demo-campo-telefono">
+                <label>
+                  <img src="https://img.icons8.com/ios-filled/14/999999/phone.png" alt="" width="14" height="14" />
+                  Teléfono *
+                </label>
+                <input
+                  type="tel"
+                  placeholder="Ej: 3001234567"
+                  value={telefonoDemo}
+                  onChange={(e) => setTelefonoDemo(e.target.value)}
+                  required
                 />
               </div>
 
@@ -390,7 +482,7 @@ const DemoReserva = ({ visible, onCerrar, selectedEvent }) => {
                   <img src="https://img.icons8.com/ios-filled/16/999999/back.png" alt="←" width="16" height="16" />
                   Atrás
                 </Boton>
-                <Boton variante="primario" className="demo-btn-confirmar" onClick={confirmarReserva} disabled={!horaSeleccionada}>
+                <Boton variante="primario" className="demo-btn-confirmar" onClick={confirmarReserva} disabled={!horaSeleccionada || !nombreDemo.trim() || (telefonoDemo || '').trim().length < 7}>
                   <img src="https://img.icons8.com/ios-filled/18/ffffff/checkmark--v1.png" alt="✓" width="18" height="18" />
                   Confirmar Reserva
                 </Boton>

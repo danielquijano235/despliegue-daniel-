@@ -38,6 +38,7 @@ const ModalNuevaReserva = ({
   const [formulario, setFormulario] = useState({
     cliente_id: "",
     cliente_nombre: "",
+    cliente_telefono: "",
     fecha: "",
     hora: "",
     numero_personas: "",
@@ -61,6 +62,7 @@ const ModalNuevaReserva = ({
       setFormulario({
         cliente_id: reserva.cliente_id || reserva.cliente || "",
         cliente_nombre: reserva.cliente_nombre || reserva.cliente || "",
+        cliente_telefono: reserva.cliente_telefono || "",
         fecha: reserva.fecha || "",
         hora: reserva.hora || "",
         numero_personas:
@@ -72,6 +74,7 @@ const ModalNuevaReserva = ({
       setFormulario({
         cliente_id: "",
         cliente_nombre: "",
+        cliente_telefono: "",
         fecha: "",
         hora: "",
         numero_personas: "",
@@ -140,6 +143,7 @@ const ModalNuevaReserva = ({
     const clienteValido = formulario.cliente_id || formulario.cliente_nombre;
     if (
       !clienteValido ||
+      !formulario.cliente_telefono ||
       !formulario.fecha ||
       !formulario.hora ||
       !formulario.numero_personas
@@ -158,6 +162,17 @@ const ModalNuevaReserva = ({
       const datosReserva = { ...formulario };
       if (datosReserva.mesa_id === "" || datosReserva.mesa_id === undefined) {
         datosReserva.mesa_id = null;
+      }
+
+      // Si no hay cliente_id, intentar crear cliente usando nombre y telefono
+      if (!datosReserva.cliente_id && datosReserva.cliente_nombre) {
+        try {
+          const res = await crearCliente({ nombre: datosReserva.cliente_nombre, telefono: datosReserva.cliente_telefono || '' });
+          const nuevo = res.cliente || res;
+          datosReserva.cliente_id = nuevo.id || datosReserva.cliente_id;
+        } catch (err) {
+          console.warn('No se pudo crear cliente al vuelo:', err);
+        }
       }
 
       if (modo === "editar" && reserva && onActualizar) {
@@ -264,6 +279,16 @@ const ModalNuevaReserva = ({
                   onChange={(e) => handleClienteInputChange(e.target.value)}
                   onFocus={() => setShowSuggestions(true)}
                   autoComplete="off"
+                  required
+                />
+
+                <input
+                  type="tel"
+                  name="cliente_telefono"
+                  className="campo-input"
+                  placeholder="Teléfono (ej: 3001234567)"
+                  value={formulario.cliente_telefono || ''}
+                  onChange={manejarCambio}
                   required
                 />
 

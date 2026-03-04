@@ -102,7 +102,7 @@ const SeccionHero = () => {
       </div>
 
       {/* Modal Demo Interactiva */}
-      <DemoReserva visible={mostrarDemo} onCerrar={() => setMostrarDemo(false)} />
+      <DemoReserva visible={mostrarDemo} onCerrar={() => setMostrarDemo(false)} demoOnly={true} />
     </section>
   );
 };

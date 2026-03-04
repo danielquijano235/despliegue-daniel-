@@ -980,8 +980,21 @@
 }
 
 .modal-formulario .campo-input {
-  padding-left: 14px;
+  width: 100%;
+  padding: 12px 14px;
+  border: 1.5px solid var(--color-borde);
+  border-radius: var(--radio-normal);
+  font-size: 0.9rem;
+  color: var(--color-texto);
+  transition: var(--transicion-rapida);
   background: var(--color-fondo-gris);
+  box-sizing: border-box;
+}
+
+.modal-formulario .campo-input:focus {
+  border-color: var(--color-amarillo);
+  background: var(--color-blanco);
+  box-shadow: 0 0 0 3px rgba(253, 176, 34, 0.15);
 }
 
 .modal-formulario select {
