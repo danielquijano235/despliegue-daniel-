@@ -46,6 +46,9 @@ const VistaMenu = () => {
   const [modalVisible, setModalVisible] = useState(false);
   const [platoEditando, setPlatoEditando] = useState(null);
   const [filtroDisponibilidad, setFiltroDisponibilidad] = useState('todos');
+  const [inlineEditId, setInlineEditId] = useState(null);
+  const [inlineForm, setInlineForm] = useState({ nombre: '', precio: '', descripcion: '' });
+  const [inlineDeleteId, setInlineDeleteId] = useState(null);
 
 
   // Formulario para nuevo/editar plato
@@ -87,6 +90,9 @@ const VistaMenu = () => {
     setCategoriaModal(c);
     setItemsCategoria(found);
     setOpenCategoria(true);
+    // reset any inline editors/confirms when opening a category
+    setInlineEditId(null);
+    setInlineDeleteId(null);
   };
 
   const cerrarCategoriaModal = () => {
@@ -113,6 +119,14 @@ const VistaMenu = () => {
   };
 
   const abrirModalEditar = (plato) => {
+    // open inline editor when inside category modal (avoid opening global add/edit modal under it)
+    if (openCategoria) {
+      setInlineEditId(plato.id || null);
+      setInlineDeleteId(null);
+      setInlineForm({ nombre: plato.nombre || '', precio: plato.precio ? String(plato.precio) : '', descripcion: plato.descripcion || '' });
+      return;
+    }
+
     setPlatoEditando(plato);
     setFormulario({
       nombre: plato.nombre,
@@ -164,6 +178,64 @@ const VistaMenu = () => {
     }
 
     cerrarModal();
+  };
+
+  // Inline edit handlers inside category modal
+  const cancelarInlineEdit = () => {
+    setInlineEditId(null);
+    setInlineForm({ nombre: '', precio: '', descripcion: '' });
+  };
+
+  const guardarInlineEdit = async () => {
+    if (!inlineEditId) return cancelarInlineEdit();
+    const updatedItem = {
+      id: inlineEditId,
+      nombre: inlineForm.nombre,
+      descripcion: inlineForm.descripcion,
+      precio: parseInt(inlineForm.precio) || 0,
+      categoria: categoriaModal ? normalizeCategoria(categoriaModal.id) : 'para-empezar',
+      disponible: true,
+      imagen: '',
+      tiempoPreparacion: 15,
+      alergenos: [],
+      popularidad: 75,
+    };
+    try {
+      const updatedAll = upsertPlato(updatedItem);
+      setPlatos(updatedAll);
+      setItemsCategoria((prev) => prev.map(it => it.id === updatedItem.id ? updatedItem : it));
+    } catch (e) {
+      // fallback: update local lists
+      setPlatos((prev) => {
+        const map = new Map();
+        prev.forEach(p => map.set(p.id, p));
+        map.set(updatedItem.id, updatedItem);
+        const updated = Array.from(map.values());
+        savePlatos(updated);
+        return updated;
+      });
+      setItemsCategoria((prev) => prev.map(it => it.id === updatedItem.id ? updatedItem : it));
+    }
+    cancelarInlineEdit();
+  };
+
+  const solicitarEliminarInline = (id) => {
+    // open inline delete confirm and close any inline editor
+    setInlineEditId(null);
+    setInlineDeleteId(id);
+  };
+
+  const cancelarEliminarInline = () => setInlineDeleteId(null);
+
+  const confirmarEliminarInline = (id) => {
+    // remove from global platos and from itemsCategoria
+    setPlatos((prev) => {
+      const updated = prev.filter(p => p.id !== id);
+      savePlatos(updated);
+      return updated;
+    });
+    setItemsCategoria((prev) => prev.filter(it => it.id !== id));
+    setInlineDeleteId(null);
   };
 
   const { agregarNotificacion } = useNotificaciones();
@@ -400,12 +472,50 @@ const VistaMenu = () => {
         <div className="categoria-list">
           {itemsCategoria.map((it, idx) => (
             <div className="categoria-item" key={it.id || it.nombre || idx}>
-              <div className="categoria-row">
-                <div className="categoria-nombre">{it.nombre}</div>
-                <div className="categoria-precio">{it.precio ? ('$' + Number(it.precio).toLocaleString('es-CO')) : ''}</div>
+              <div className="categoria-row" style={{ alignItems: 'center' }}>
+                <div style={{ flex: 1 }}>
+                  <div className="categoria-nombre">{it.nombre}</div>
+                  {it.descripcion ? <div className="categoria-desc">{it.descripcion}</div> : null}
+                </div>
+                <div style={{ textAlign: 'right' }}>
+                  <div className="categoria-precio" style={{ marginBottom: 8 }}>{it.precio ? ('$' + Number(it.precio).toLocaleString('es-CO')) : ''}</div>
+                  {/* Mostrar acciones SOLO en el dashboard (platos persistidos con id) */}
+                  {it.id ? (
+                    <div style={{ display: 'flex', gap: 8, justifyContent: 'flex-end' }}>
+                      <Boton variante="ghost" className="btn-accion" onClick={() => abrirModalEditar(it)} title="Editar">
+                        <img src="https://img.icons8.com/ios-filled/18/1a1a2e/edit.png" alt="Editar" style={{ width: 18, height: 18 }} />
+                      </Boton>
+                      <Boton variante="peligro" className="btn-accion" onClick={() => solicitarEliminarInline(it.id)} title="Eliminar">
+                        <img src="https://img.icons8.com/ios-filled/18/ffffff/trash.png" alt="Eliminar" style={{ width: 18, height: 18 }} />
+                      </Boton>
+                    </div>
+                  ) : null}
+                </div>
               </div>
-              {it.descripcion ? <div className="categoria-desc">{it.descripcion}</div> : null}
-              <div className="categoria-sep" />
+              {inlineEditId === it.id ? (
+                <div style={{ padding: 12, background: 'var(--bg-contrast, #fff)', borderRadius: 8, marginTop: 8, border: '1px solid rgba(0,0,0,0.06)', boxShadow: '0 2px 6px rgba(0,0,0,0.04)'}}>
+                  <div style={{ display: 'flex', gap: 8 }}>
+                    <input style={{ flex: 1, padding: '8px 10px', borderRadius: 6, border: '1px solid rgba(0,0,0,0.08)' }} type="text" value={inlineForm.nombre} onChange={(e) => setInlineForm({...inlineForm, nombre: e.target.value})} />
+                    <input style={{ width: 120, padding: '8px 10px', borderRadius: 6, border: '1px solid rgba(0,0,0,0.08)' }} type="number" value={inlineForm.precio} onChange={(e) => setInlineForm({...inlineForm, precio: e.target.value})} />
+                  </div>
+                  <div style={{ marginTop: 8 }}>
+                    <textarea rows={2} style={{ width: '100%', padding: '8px 10px', borderRadius: 6, border: '1px solid rgba(0,0,0,0.08)' }} value={inlineForm.descripcion} onChange={(e) => setInlineForm({...inlineForm, descripcion: e.target.value})} />
+                  </div>
+                  <div style={{ marginTop: 8, display: 'flex', gap: 8, justifyContent: 'flex-end' }}>
+                    <Boton variante="secundario" onClick={cancelarInlineEdit}>Cancelar</Boton>
+                    <Boton variante="primario" onClick={guardarInlineEdit}>Guardar</Boton>
+                  </div>
+                </div>
+              ) : (
+                <div className="categoria-sep" />
+              )}
+              {inlineDeleteId === it.id ? (
+                <div style={{ marginTop: 8, display: 'flex', gap: 8, justifyContent: 'flex-end' }}>
+                  <span style={{ alignSelf: 'center', color: '#b91c1c' }}>¿Eliminar?</span>
+                  <Boton variante="secundario" onClick={cancelarEliminarInline}>No</Boton>
+                  <Boton variante="peligro" onClick={() => confirmarEliminarInline(it.id)}>Sí, eliminar</Boton>
+                </div>
+              ) : null}
             </div>
           ))}
         </div>
