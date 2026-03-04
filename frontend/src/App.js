@@ -24,10 +24,6 @@ import PaginaLogin from './paginas/PaginaLogin';
 import PaginaDashboard from './paginas/PaginaDashboard';
 import PaginaDemoLanding from './paginas/PaginaDemoLanding';
 import PaginaMenu from './paginas/PaginaMenu';
-import MenuBebidas from './paginas/MenuBebidas';
-import MenuDesayunos from './paginas/MenuDesayunos';
-import MenuCenas from './paginas/MenuCenas';
-import MenuCarnes from './paginas/MenuCarnes';
 import { seedIfEmpty } from './servicios/menuStorage';
 import samplePlatos from './servicios/samplePlatos';
 import './estilos/variables.css';
@@ -91,12 +87,9 @@ function App() {
         {/* Ruta pública: Demo Landing */}
         <Route path="/demo-landing" element={<PaginaDemoLanding />} />
 
-        {/* Página del menú (placeholder) */}
+        {/* Página del menú (genérica por categoría) */}
         <Route path="/menu" element={<PaginaMenu />} />
-        <Route path="/menu/bebidas" element={<MenuBebidas />} />
-        <Route path="/menu/desayunos" element={<MenuDesayunos />} />
-        <Route path="/menu/cenas" element={<MenuCenas />} />
-        <Route path="/menu/carnes" element={<MenuCarnes />} />
+        <Route path="/menu/:categoria" element={<PaginaMenu />} />
 
         {/* Ruta protegida: Dashboard (solo usuarios logueados) */}
         <Route
