@@ -13,13 +13,18 @@
  */
 
 // ============================================
-// DATOS DE CONEXIÓN A LA BASE DE DATOS
-// Modificar según tu configuración de XAMPP
+// DATOS DE CONEXIÓN A LA BASE DE DATOS (desde ENV)
+// En producción se recomienda configurar las variables de entorno
+// DB_HOST, DB_PORT, DB_USER, DB_PASS, DB_NAME y FRONTEND_URL
 // ============================================
-$servidor = "localhost";
-$usuario = "root";
-$contrasena = "";       // Vacía por defecto en XAMPP
-$base_datos = "bookit";
+$servidor = getenv('DB_HOST') ?: 'localhost';
+$puerto = intval(getenv('DB_PORT') ?: 3306);
+$usuario = getenv('DB_USER') ?: 'root';
+$contrasena = getenv('DB_PASS') ?: '';
+$base_datos = getenv('DB_NAME') ?: 'bookit';
+
+// Origen del frontend para CORS (ej. https://mi-frontend.onrender.com)
+$frontend_url = getenv('FRONTEND_URL') ?: 'http://localhost:3000';
 
 // ============================================
 // CREAR CONEXIÓN CON LA BASE DE DATOS
@@ -40,14 +45,12 @@ mysqli_query($conexion, "SET NAMES 'utf8mb4' COLLATE 'utf8mb4_unicode_ci'");
 
 // ============================================
 // CONFIGURACIÓN DE CORS (Cross-Origin Resource Sharing)
-// Esto es necesario porque React corre en localhost:3000
-// y PHP corre en localhost (puerto 80).
-// Sin estos headers, el navegador bloquea las peticiones.
+// Leemos el origen permitido desde la variable FRONTEND_URL
 // ============================================
-header("Access-Control-Allow-Origin: http://localhost:3000");  // Permitir peticiones desde React
-header("Access-Control-Allow-Methods: GET, POST, PUT, DELETE, OPTIONS");  // Métodos HTTP permitidos
-header("Access-Control-Allow-Headers: Content-Type, Authorization");  // Headers permitidos
-header("Access-Control-Allow-Credentials: true");  // Permitir envío de cookies (para sesiones)
+header("Access-Control-Allow-Origin: " . $frontend_url);
+header("Access-Control-Allow-Methods: GET, POST, PUT, DELETE, OPTIONS");
+header("Access-Control-Allow-Headers: Content-Type, Authorization");
+header("Access-Control-Allow-Credentials: true");
 header("Content-Type: application/json; charset=UTF-8");  // Todas las respuestas serán JSON
 
 // ============================================
@@ -63,8 +66,25 @@ if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
 
 // ============================================
 // INICIAR SESIÓN PHP
-// Esto permite guardar datos del usuario logueado
-// entre diferentes peticiones.
+// Configuramos parámetros de la cookie de sesión para permitir
+// su uso en cross-site cuando el backend está detrás de un proxy HTTPS
+// (localtunnel, ngrok, Render, etc.). Se detecta HTTPS mediante
+// variables como HTTPS o X-Forwarded-Proto.
 // ============================================
+// Detectar si la petición original fue sobre HTTPS (proxy incluido)
+$is_https = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off')
+    || (!empty($_SERVER['HTTP_X_FORWARDED_PROTO']) && $_SERVER['HTTP_X_FORWARDED_PROTO'] === 'https')
+    || (!empty($_SERVER['HTTP_X_FORWARDED_SSL']) && $_SERVER['HTTP_X_FORWARDED_SSL'] === 'on');
+
+// Ajustar cookie params: SameSite=None y secure cuando sea HTTPS
+session_set_cookie_params([
+    'lifetime' => 0,
+    'path' => '/',
+    'domain' => '',
+    'secure' => $is_https,
+    'httponly' => true,
+    'samesite' => 'None'
+]);
+
 session_start();
 ?>

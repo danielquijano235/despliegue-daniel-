@@ -1,0 +1,8 @@
+{
+  "name": "bookit-root",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "build-frontend": "cd frontend && npm ci && npm run build && rm -rf ../backend/public && mkdir -p ../backend/public && cp -a build/. ../backend/public/"
+  }
+}
