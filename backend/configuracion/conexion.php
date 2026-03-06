@@ -23,24 +23,33 @@ $usuario = getenv('DB_USER') ?: 'root';
 $contrasena = getenv('DB_PASS') ?: '';
 $base_datos = getenv('DB_NAME') ?: 'bookit';
 
-// Origen del frontend para CORS (ej. https://mi-frontend.onrender.com)
-// Valor por defecto para desarrollo
-$frontend_url = getenv('FRONTEND_URL') ?: 'http://localhost:3000';
+// Orígenes permitidos para CORS (desde env). Soporta `FRONTEND_URL` o `FRONTEND_URLS` (coma-separada)
+$frontend_env = getenv('FRONTEND_URL') ?: '';
+$frontend_env_multi = getenv('FRONTEND_URLS') ?: '';
 
-// Construir lista de orígenes permitidos (allowlist)
-$allowed_origins = array_filter([
-    $frontend_url,
-    'http://localhost:3000',
-    'http://localhost'
-]);
+// Construir lista de orígenes permitidos y normalizar (sin barra final)
+$allowed_origins = [];
+if ($frontend_env_multi) {
+    foreach (explode(',', $frontend_env_multi) as $u) {
+        $u = trim($u);
+        if ($u !== '') $allowed_origins[] = rtrim($u, '/');
+    }
+}
+if ($frontend_env) {
+    $allowed_origins[] = rtrim($frontend_env, '/');
+}
+$allowed_origins[] = 'http://localhost:3000';
+$allowed_origins[] = 'http://localhost';
+$allowed_origins = array_values(array_unique($allowed_origins));
 
 // Determinar el origen de la petición y responder dinámicamente si está permitido
-$request_origin = isset($_SERVER['HTTP_ORIGIN']) ? $_SERVER['HTTP_ORIGIN'] : '';
+$request_origin = isset($_SERVER['HTTP_ORIGIN']) ? rtrim($_SERVER['HTTP_ORIGIN'], '/') : '';
 if ($request_origin && in_array($request_origin, $allowed_origins, true)) {
     header('Access-Control-Allow-Origin: ' . $request_origin);
 } else {
-    // Fallback a la URL configurada (útil para herramientas que no envían Origin)
-    header('Access-Control-Allow-Origin: ' . $frontend_url);
+    // Fallback: usar el primer origen configurado si existe, sino localhost:3000
+    $fallback = !empty($allowed_origins) ? $allowed_origins[0] : 'http://localhost:3000';
+    header('Access-Control-Allow-Origin: ' . $fallback);
 }
 header('Vary: Origin');
 
