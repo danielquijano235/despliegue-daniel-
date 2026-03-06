@@ -2,6 +2,13 @@ FROM php:8.1-cli
 
 WORKDIR /app
 
+# Instalar dependencias necesarias y las extensiones de MySQL (mysqli, pdo_mysql)
+RUN apt-get update \
+	&& apt-get install -y --no-install-recommends libzip-dev libonig-dev libxml2-dev default-mysql-client unzip \
+	&& docker-php-ext-install mysqli pdo pdo_mysql \
+	&& apt-get clean \
+	&& rm -rf /var/lib/apt/lists/*
+
 # Copia todo el repo al contenedor
 COPY . /app
 
