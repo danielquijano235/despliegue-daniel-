@@ -62,7 +62,11 @@ header('Content-Type: application/json; charset=UTF-8');  // Default JSON
 // Evitar mostrar errores en HTML y capturar errores fatales al final del script
 ini_set('display_errors', '0');
 error_reporting(E_ALL);
-register_shutdown_function(function() use ($allowed_origins) {
+
+// Handler de shutdown (evita uso de sintaxis compleja en entornos inesperados)
+function bookit_shutdown_handler()
+{
+    global $allowed_origins;
     $err = error_get_last();
     if ($err && in_array($err['type'], [E_ERROR, E_PARSE, E_CORE_ERROR, E_COMPILE_ERROR], true)) {
         if (!headers_sent()) {
@@ -78,7 +82,8 @@ register_shutdown_function(function() use ($allowed_origins) {
         echo json_encode(['error' => 'Internal server error', 'detail' => $err['message']]);
         exit();
     }
-});
+}
+register_shutdown_function('bookit_shutdown_handler');
 
 // ============================================
 // CREAR CONEXIÓN CON LA BASE DE DATOS
