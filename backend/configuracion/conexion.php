@@ -30,7 +30,7 @@ $frontend_url = getenv('FRONTEND_URL') ?: 'http://localhost:3000';
 // CREAR CONEXIÓN CON LA BASE DE DATOS
 // Usamos mysqli_connect para conectar PHP con MySQL
 // ============================================
-$conexion = mysqli_connect($servidor, $usuario, $contrasena, $base_datos);
+$conexion = mysqli_connect($servidor, $usuario, $contrasena, $base_datos, $puerto);
 
 // Verificar si la conexión fue exitosa
 if (!$conexion) {
