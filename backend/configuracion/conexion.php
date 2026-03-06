@@ -44,12 +44,22 @@ $allowed_origins = array_values(array_unique($allowed_origins));
 
 // Determinar el origen de la petición y responder dinámicamente si está permitido
 $request_origin = isset($_SERVER['HTTP_ORIGIN']) ? rtrim($_SERVER['HTTP_ORIGIN'], '/') : '';
-if ($request_origin && in_array($request_origin, $allowed_origins, true)) {
-    header('Access-Control-Allow-Origin: ' . $request_origin);
+// DEBUG/SAFE MODE: permitir todos los orígenes cuando la variable FRONTEND_ALLOW_ALL=1
+$allow_all = getenv('FRONTEND_ALLOW_ALL') ?: getenv('ALLOW_ALL_ORIGINS') ?: '';
+if (!empty($allow_all) && ($allow_all === '1' || strtolower($allow_all) === 'true')) {
+    if ($request_origin) {
+        header('Access-Control-Allow-Origin: ' . $request_origin);
+    } else {
+        header('Access-Control-Allow-Origin: *');
+    }
 } else {
-    // Fallback: usar el primer origen configurado si existe, sino localhost:3000
-    $fallback = !empty($allowed_origins) ? $allowed_origins[0] : 'http://localhost:3000';
-    header('Access-Control-Allow-Origin: ' . $fallback);
+    if ($request_origin && in_array($request_origin, $allowed_origins, true)) {
+        header('Access-Control-Allow-Origin: ' . $request_origin);
+    } else {
+        // Fallback: usar el primer origen configurado si existe, sino localhost:3000
+        $fallback = !empty($allowed_origins) ? $allowed_origins[0] : 'http://localhost:3000';
+        header('Access-Control-Allow-Origin: ' . $fallback);
+    }
 }
 header('Vary: Origin');
 
