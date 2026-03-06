@@ -5,7 +5,9 @@
 // `REACT_APP_API_URL` se inyecta en tiempo de build por Create React App.
 // Valor por defecto apuntando al backend desplegado en Render.
 // ============================================
+
 const API_URL = process.env.REACT_APP_API_URL || 'https://despliegue-back-uw2a.onrender.com';
+
 
 /**
  * Función auxiliar para hacer peticiones HTTP
