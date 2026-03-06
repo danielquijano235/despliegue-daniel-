@@ -53,6 +53,33 @@ if ($request_origin && in_array($request_origin, $allowed_origins, true)) {
 }
 header('Vary: Origin');
 
+// Enviar headers CORS esenciales de forma temprana para que los preflight/options reciban respuesta
+header('Access-Control-Allow-Credentials: true');
+header('Access-Control-Allow-Methods: GET, POST, PUT, DELETE, OPTIONS');
+header('Access-Control-Allow-Headers: Content-Type, Authorization, X-Requested-With, Accept');
+header('Content-Type: application/json; charset=UTF-8');  // Default JSON
+
+// Evitar mostrar errores en HTML y capturar errores fatales al final del script
+ini_set('display_errors', '0');
+error_reporting(E_ALL);
+register_shutdown_function(function() use ($allowed_origins) {
+    $err = error_get_last();
+    if ($err && in_array($err['type'], [E_ERROR, E_PARSE, E_CORE_ERROR, E_COMPILE_ERROR], true)) {
+        if (!headers_sent()) {
+            $origin = isset($_SERVER['HTTP_ORIGIN']) ? rtrim($_SERVER['HTTP_ORIGIN'], '/') : ($allowed_origins[0] ?? 'http://localhost:3000');
+            header('Access-Control-Allow-Origin: ' . $origin);
+            header('Vary: Origin');
+            header('Access-Control-Allow-Credentials: true');
+            header('Access-Control-Allow-Methods: GET, POST, PUT, DELETE, OPTIONS');
+            header('Access-Control-Allow-Headers: Content-Type, Authorization, X-Requested-With, Accept');
+            header('Content-Type: application/json; charset=UTF-8');
+        }
+        http_response_code(500);
+        echo json_encode(['error' => 'Internal server error', 'detail' => $err['message']]);
+        exit();
+    }
+});
+
 // ============================================
 // CREAR CONEXIÓN CON LA BASE DE DATOS
 // Usamos mysqli_connect para conectar PHP con MySQL
