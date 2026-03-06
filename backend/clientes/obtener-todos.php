@@ -9,7 +9,7 @@
  * Devuelve: JSON con array de todos los clientes del restaurante
  */
 
-require_once '../configuracion/conexion.php';
+require_once __DIR__ . '/../configuracion/conexion.php';
 
 // Verificar sesión
 if (!isset($_SESSION['usuario_id'])) {

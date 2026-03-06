@@ -26,7 +26,7 @@ error_reporting(E_ALL);
  * 3. Devolver el ID de la reserva creada
  */
 
-require_once '../configuracion/conexion.php';
+require_once __DIR__ . '/../configuracion/conexion.php';
 
 // Log temporal para depuración del método HTTP
 file_put_contents(__DIR__ . '/log_metodo.txt', date('c') . ' - Metodo: ' . $_SERVER['REQUEST_METHOD'] . "\n", FILE_APPEND);

@@ -13,7 +13,7 @@
  * activa cuando el usuario entra al dashboard o recarga la página.
  */
 
-require_once '../configuracion/conexion.php';
+require_once __DIR__ . '/../configuracion/conexion.php';
 
 // Verificar si hay una sesión activa
 // (si existe el usuario_id en $_SESSION significa que se logueó)

@@ -19,7 +19,7 @@
  */
 
 // Incluir el archivo de conexión (que también configura CORS y sesiones)
-require_once '../configuracion/conexion.php';
+require_once __DIR__ . '/../configuracion/conexion.php';
 
 // Solo aceptar peticiones POST (no GET, PUT, etc.)
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {

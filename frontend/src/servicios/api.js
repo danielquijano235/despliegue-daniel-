@@ -6,7 +6,9 @@
 // Valor por defecto apuntando al backend desplegado en Render.
 // ============================================
 
-const API_URL = process.env.REACT_APP_API_URL || 'https://despliegue-back-uw2a.onrender.com';
+// Usar `REACT_APP_API_URL` en producción o rutas relativas `/bookit-api`
+// para cuando frontend y backend se sirven desde el mismo dominio.
+const API_URL = process.env.REACT_APP_API_URL || '/bookit-api';
 
 
 /**

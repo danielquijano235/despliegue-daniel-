@@ -9,7 +9,7 @@
  * Devuelve: JSON con los datos de un cliente específico
  */
 
-require_once '../configuracion/conexion.php';
+require_once __DIR__ . '/../configuracion/conexion.php';
 
 if (!isset($_SESSION['usuario_id'])) {
     http_response_code(401);

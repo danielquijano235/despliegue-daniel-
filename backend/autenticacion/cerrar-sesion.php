@@ -12,7 +12,7 @@
  * que volver a iniciar sesión.
  */
 
-require_once '../configuracion/conexion.php';
+require_once __DIR__ . '/../configuracion/conexion.php';
 
 // Destruir todas las variables de sesión
 session_destroy();

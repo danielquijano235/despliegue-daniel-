@@ -9,7 +9,7 @@
  * Devuelve: JSON con mensaje de éxito o error
  */
 
-require_once '../configuracion/conexion.php';
+require_once __DIR__ . '/../configuracion/conexion.php';
 
 if (!isset($_SESSION['usuario_id'])) {
     http_response_code(401);

@@ -12,7 +12,7 @@
  * Las reservas se ordenan por fecha descendente (más recientes primero).
  */
 
-require_once '../configuracion/conexion.php';
+require_once __DIR__ . '/../configuracion/conexion.php';
 
 // Verificar que el usuario esté logueado
 if (!isset($_SESSION['usuario_id'])) {
